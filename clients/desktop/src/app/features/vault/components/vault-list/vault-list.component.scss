@@ -51,6 +51,25 @@
   }
 }
 
+.btn-delete-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #fee;
+  color: #c53030;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #dc2626;
+    color: white;
+  }
+}
+
 .btn-lock {
   display: flex;
   align-items: center;

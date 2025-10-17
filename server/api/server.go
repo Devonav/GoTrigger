@@ -70,6 +70,7 @@ func (s *Server) setupRoutes() {
 		protected.GET("/sync/manifest", s.syncHandler.GetManifest)
 		protected.POST("/sync/pull", s.syncHandler.PullSync)
 		protected.POST("/sync/push", s.syncHandler.PushSync)
+		protected.DELETE("/sync/credentials", s.syncHandler.DeleteAllCredentials)
 
 		// Device management
 		protected.GET("/devices", s.deviceHandler.ListDevices)

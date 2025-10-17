@@ -189,6 +189,12 @@ export class ApiService {
     return this.http.delete(`${this.baseUrl}/api/v1/peers/${peerID}`);
   }
 
+  deleteAllCredentials(zone: string = 'default'): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/api/v1/sync/credentials?zone=${zone}`, {
+      headers: this.getHeaders()
+    });
+  }
+
   healthCheck(): Observable<any> {
     return this.http.get(`${this.baseUrl}/health`);
   }

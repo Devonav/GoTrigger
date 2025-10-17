@@ -3,6 +3,7 @@ import { TripleLayerCryptoService } from '../../../core/crypto/triple-layer-cryp
 import { CredentialManagerService } from '../../../core/vault/credential-manager.service';
 import { TripleLayerSyncService } from '../../../core/sync/triple-layer-sync.service';
 import { VaultCredential } from '../../../shared/models';
+import { ApiService } from '../../../services/api.service';
 
 interface LegacyVaultCredential {
   uuid: string;
@@ -31,7 +32,8 @@ export class VaultService {
   constructor(
     private crypto: TripleLayerCryptoService,
     private manager: CredentialManagerService,
-    private sync: TripleLayerSyncService
+    private sync: TripleLayerSyncService,
+    private api: ApiService
   ) {}
 
   async unlock(password: string, salt?: Uint8Array): Promise<void> {
@@ -213,5 +215,16 @@ export class VaultService {
   private resetAutoLockTimer(): void {
     this.stopAutoLockTimer();
     this.startAutoLockTimer();
+  }
+
+  async deleteAllCredentials(): Promise<void> {
+    try {
+      await this.api.deleteAllCredentials('default').toPromise();
+      // Clear local credentials
+      this.credentials.set([]);
+    } catch (error) {
+      console.error('Failed to delete all credentials:', error);
+      throw error;
+    }
   }
 }

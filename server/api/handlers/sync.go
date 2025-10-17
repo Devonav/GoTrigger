@@ -220,6 +220,100 @@ func (h *SyncHandler) PullSync(c *gin.Context) {
 	})
 }
 
+func (h *SyncHandler) DeleteAllCredentials(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not authenticated"})
+		return
+	}
+
+	zone := c.DefaultQuery("zone", "default")
+
+	// Get all credential metadata for this user
+	credMetadata, err := h.pgStore.GetCredentialMetadataByUser(userID.(string), zone, 0)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get credentials: " + err.Error()})
+		return
+	}
+
+	// Get all crypto keys for this user
+	cryptoKeys, err := h.pgStore.GetCryptoKeysByUser(userID.(string), zone, 0)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get crypto keys: " + err.Error()})
+		return
+	}
+
+	// Get all sync records for this user
+	syncRecords, err := h.pgStore.GetSyncRecordsByUser(userID.(string), zone, 0)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get sync records: " + err.Error()})
+		return
+	}
+
+	syncState, err := h.pgStore.GetSyncState(userID.(string), zone)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	currentGenCount := syncState.GenCount
+	var deletedCount int
+
+	// Mark all credential metadata as tombstoned
+	for i := range credMetadata {
+		credMetadata[i].Tombstone = true
+		currentGenCount++
+		credMetadata[i].GenCount = currentGenCount
+
+		if err := h.pgStore.CreateCredentialMetadata(userID.(string), credMetadata[i].ItemUUID.String(), credMetadata[i]); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to tombstone credential: " + err.Error()})
+			return
+		}
+		deletedCount++
+	}
+
+	// Mark all crypto keys as tombstoned
+	for i := range cryptoKeys {
+		cryptoKeys[i].Tombstone = true
+		currentGenCount++
+		cryptoKeys[i].GenCount = currentGenCount
+
+		if err := h.pgStore.CreateCryptoKey(userID.(string), cryptoKeys[i].ItemUUID.String(), cryptoKeys[i]); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to tombstone key: " + err.Error()})
+			return
+		}
+		deletedCount++
+	}
+
+	// Mark all sync records as tombstoned
+	for i := range syncRecords {
+		syncRecords[i].Tombstone = true
+		currentGenCount++
+		syncRecords[i].GenCount = currentGenCount
+
+		if err := h.pgStore.CreateSyncRecord(userID.(string), syncRecords[i].ItemUUID.String(), syncRecords[i]); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to tombstone sync record: " + err.Error()})
+			return
+		}
+		deletedCount++
+	}
+
+	// Update sync state
+	syncEngine := sync.NewSyncEngine(zone)
+	digest := syncEngine.UpdateManifestDigest([]string{}) // Empty manifest since all deleted
+
+	if err := h.pgStore.UpsertSyncState(userID.(string), zone, currentGenCount, digest); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"gencount": currentGenCount,
+		"deleted":  deletedCount,
+		"message":  "All credentials marked as deleted",
+	})
+}
+
 func (h *SyncHandler) PushSync(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {

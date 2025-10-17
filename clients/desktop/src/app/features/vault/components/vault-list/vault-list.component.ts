@@ -278,4 +278,25 @@ export class VaultListComponent implements OnInit {
       await this.vaultService.loadCredentials();
     }
   }
+
+  async deleteAllCredentials(): Promise<void> {
+    const confirmed = confirm(
+      'Are you sure you want to delete ALL credentials from the server?\n\n' +
+      'This will mark all credentials as deleted on the server. ' +
+      'This action affects all devices synced to your account.'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await this.vaultService.deleteAllCredentials();
+      await this.vaultService.loadCredentials();
+      alert('All credentials have been deleted successfully.');
+    } catch (error) {
+      console.error('Failed to delete all credentials:', error);
+      alert(`Failed to delete credentials: ${error}`);
+    }
+  }
 }
