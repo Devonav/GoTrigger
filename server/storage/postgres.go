@@ -271,16 +271,20 @@ func (s *PostgresStore) CreateCryptoKey(userID, itemUUID string, key *models.Cry
 }
 
 func (s *PostgresStore) GetCryptoKeysByUser(userID, zone string, sinceGenCount int64) ([]*models.CryptoKey, error) {
+	return s.GetCryptoKeysByUserWithFilter(userID, zone, sinceGenCount, true)
+}
+
+func (s *PostgresStore) GetCryptoKeysByUserWithFilter(userID, zone string, sinceGenCount int64, includeTombstoned bool) ([]*models.CryptoKey, error) {
 	query := `
 		SELECT id, user_id, item_uuid, zone, key_class, key_type, label,
 		       application_label, access_group, data, usage_flags, gencount,
 		       tombstone, created_at, updated_at
 		FROM crypto_keys
-		WHERE user_id = $1 AND zone = $2 AND gencount > $3
+		WHERE user_id = $1 AND zone = $2 AND gencount > $3 AND (tombstone = false OR $4 = true)
 		ORDER BY gencount ASC
 	`
 
-	rows, err := s.db.Query(query, userID, zone, sinceGenCount)
+	rows, err := s.db.Query(query, userID, zone, sinceGenCount, includeTombstoned)
 	if err != nil {
 		return nil, err
 	}
@@ -332,16 +336,20 @@ func (s *PostgresStore) CreateCredentialMetadata(userID, itemUUID string, cred *
 }
 
 func (s *PostgresStore) GetCredentialMetadataByUser(userID, zone string, sinceGenCount int64) ([]*models.CredentialMetadata, error) {
+	return s.GetCredentialMetadataByUserWithFilter(userID, zone, sinceGenCount, true)
+}
+
+func (s *PostgresStore) GetCredentialMetadataByUserWithFilter(userID, zone string, sinceGenCount int64, includeTombstoned bool) ([]*models.CredentialMetadata, error) {
 	query := `
 		SELECT id, user_id, item_uuid, zone, server, account, protocol, port,
 		       path, label, access_group, password_key_uuid, metadata_key_uuid,
 		       gencount, tombstone, created_at, updated_at
 		FROM credential_metadata
-		WHERE user_id = $1 AND zone = $2 AND gencount > $3
+		WHERE user_id = $1 AND zone = $2 AND gencount > $3 AND (tombstone = false OR $4 = true)
 		ORDER BY gencount ASC
 	`
 
-	rows, err := s.db.Query(query, userID, zone, sinceGenCount)
+	rows, err := s.db.Query(query, userID, zone, sinceGenCount, includeTombstoned)
 	if err != nil {
 		return nil, err
 	}
@@ -392,16 +400,20 @@ func (s *PostgresStore) CreateSyncRecord(userID, itemUUID string, record *models
 }
 
 func (s *PostgresStore) GetSyncRecordsByUser(userID, zone string, sinceGenCount int64) ([]*models.SyncRecord, error) {
+	return s.GetSyncRecordsByUserWithFilter(userID, zone, sinceGenCount, true)
+}
+
+func (s *PostgresStore) GetSyncRecordsByUserWithFilter(userID, zone string, sinceGenCount int64, includeTombstoned bool) ([]*models.SyncRecord, error) {
 	query := `
 		SELECT id, user_id, item_uuid, zone, parent_key_uuid, wrapped_key,
 		       enc_item, enc_version, context_id, gencount, tombstone,
 		       created_at, updated_at
 		FROM sync_records
-		WHERE user_id = $1 AND zone = $2 AND gencount > $3
+		WHERE user_id = $1 AND zone = $2 AND gencount > $3 AND (tombstone = false OR $4 = true)
 		ORDER BY gencount ASC
 	`
 
-	rows, err := s.db.Query(query, userID, zone, sinceGenCount)
+	rows, err := s.db.Query(query, userID, zone, sinceGenCount, includeTombstoned)
 	if err != nil {
 		return nil, err
 	}

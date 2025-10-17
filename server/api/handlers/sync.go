@@ -33,8 +33,9 @@ func ptrToString(s *string) string {
 }
 
 type PullSyncRequest struct {
-	Zone         string `json:"zone"`
-	LastGenCount int64  `json:"last_gencount"`
+	Zone              string `json:"zone"`
+	LastGenCount      int64  `json:"last_gencount"`
+	IncludeTombstoned bool   `json:"include_tombstoned"`
 }
 
 type PushSyncRequest struct {
@@ -128,19 +129,20 @@ func (h *SyncHandler) PullSync(c *gin.Context) {
 		req.Zone = "default"
 	}
 
-	cryptoKeys, err := h.pgStore.GetCryptoKeysByUser(userID.(string), req.Zone, req.LastGenCount)
+	// Use filtered queries to exclude tombstoned records unless explicitly requested
+	cryptoKeys, err := h.pgStore.GetCryptoKeysByUserWithFilter(userID.(string), req.Zone, req.LastGenCount, req.IncludeTombstoned)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get crypto keys: " + err.Error()})
 		return
 	}
 
-	credMetadata, err := h.pgStore.GetCredentialMetadataByUser(userID.(string), req.Zone, req.LastGenCount)
+	credMetadata, err := h.pgStore.GetCredentialMetadataByUserWithFilter(userID.(string), req.Zone, req.LastGenCount, req.IncludeTombstoned)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get credential metadata: " + err.Error()})
 		return
 	}
 
-	syncRecords, err := h.pgStore.GetSyncRecordsByUser(userID.(string), req.Zone, req.LastGenCount)
+	syncRecords, err := h.pgStore.GetSyncRecordsByUserWithFilter(userID.(string), req.Zone, req.LastGenCount, req.IncludeTombstoned)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get sync records: " + err.Error()})
 		return

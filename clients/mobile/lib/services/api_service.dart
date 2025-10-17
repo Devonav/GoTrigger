@@ -96,6 +96,7 @@ class ApiService {
   static Future<Map<String, dynamic>> pullSync({
     String zone = 'default',
     int lastGenCount = 0,
+    bool includeTombstoned = false,
   }) async {
     final headers = await getAuthHeaders();
 
@@ -105,6 +106,7 @@ class ApiService {
       body: jsonEncode({
         'zone': zone,
         'last_gencount': lastGenCount,
+        'include_tombstoned': includeTombstoned,
       }),
     );
 
