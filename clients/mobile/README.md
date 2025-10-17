@@ -10,11 +10,14 @@ Cross-platform password manager iOS client built with Flutter. Features end-to-e
 - ✅ REST API service for authentication
 - ✅ End-to-end encryption (ChaCha20-Poly1305)
 - ✅ Credential model matching desktop client
+- ✅ **Face ID / Touch ID biometric unlock**
+- ✅ Secure credential storage (iOS Keychain)
+- ✅ Authentication screens (login/register)
+- ✅ Sync with tombstone filtering
 
 ### In Progress
 - 🚧 Local SQLite storage
-- 🚧 Authentication screens (login/register)
-- 🚧 Vault unlock with biometric support
+- 🚧 Vault unlock screen
 - 🚧 Credential list and management
 
 ## Tech Stack
@@ -213,17 +216,75 @@ final decrypted = await CryptoService.decryptCredential(
 );
 ```
 
+## Biometric Authentication
+
+### Implementation
+
+The mobile client now supports Face ID and Touch ID for secure biometric unlock:
+
+**BiometricService** (`lib/services/biometric_service.dart`):
+```dart
+// Check availability
+bool available = await BiometricService.isBiometricAvailable();
+
+// Get biometric type (Face ID, Touch ID, etc.)
+String type = await BiometricService.getBiometricTypeName();
+
+// Enable biometric login after successful password login
+await BiometricService.enableBiometricLogin(
+  username: 'user@example.com',
+  password: 'password123',
+);
+
+// Get stored credentials with biometric authentication
+Map<String, String>? creds = await BiometricService.getStoredCredentials();
+
+// Disable biometric login
+await BiometricService.disableBiometricLogin();
+```
+
+### User Flow
+
+1. **First Login**: User enters username/password
+2. **Setup Prompt**: Dialog asks to enable Face ID/Touch ID
+3. **Credential Storage**: Encrypted in iOS Keychain
+4. **Subsequent Logins**: Tap biometric button → Authenticate → Auto-login
+
+### Testing on Simulator
+
+Enable Face ID in iOS Simulator:
+1. Open Simulator app
+2. Menu: **Features** → **Face ID** → **Enrolled**
+3. Simulate authentication: **Features** → **Face ID** → **Matching Face**
+
+## Server Sync
+
+### Tombstone Filtering
+
+The mobile client now filters tombstoned (deleted) credentials during sync:
+
+```dart
+// Pull sync without tombstoned records (default)
+await ApiService.pullSync(
+  zone: 'default',
+  lastGenCount: 0,
+  includeTombstoned: false,  // Filters out deleted credentials
+);
+```
+
+Server-side filtering prevents deleted credentials from appearing in mobile sync responses.
+
 ## Next Steps
 
 1. ✅ Set up project structure
 2. ✅ Implement GraphQL client
 3. ✅ Implement encryption services
-4. ⏳ Implement local SQLite storage
-5. ⏳ Build authentication screens
-6. ⏳ Build vault unlock screen
-7. ⏳ Build credential list screen
-8. ⏳ Add biometric authentication
-9. ⏳ Implement sync functionality
+4. ✅ Build authentication screens
+5. ✅ Add biometric authentication
+6. ✅ Implement sync with tombstone filtering
+7. ⏳ Implement local SQLite storage
+8. ⏳ Build vault unlock screen
+9. ⏳ Build credential list screen
 10. ⏳ Add import functionality (future)
 
 ## License

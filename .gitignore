@@ -62,3 +62,29 @@ dist/
 # Electron
 release/
 out/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Flutter build outputs
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Pods/
+
+# GraphQL generated files
+server/graph/generated/
+server/graph/model/
