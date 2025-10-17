@@ -60,7 +60,8 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/vault');
+        // Skip vault unlock screen and go directly to vault list
+        Navigator.of(context).pushReplacementNamed('/vault-list');
       }
     } catch (e) {
       if (mounted) {

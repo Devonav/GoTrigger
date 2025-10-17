@@ -227,4 +227,19 @@ export class VaultService {
       throw error;
     }
   }
+
+  async clearLocalStorage(): Promise<void> {
+    try {
+      // Use Electron IPC to clear the local SQLite database
+      if (window.electron?.database?.clearDatabase) {
+        await window.electron.database.clearDatabase();
+        console.log('✅ Local database cleared');
+      } else {
+        throw new Error('Database clear API not available');
+      }
+    } catch (error) {
+      console.error('Failed to clear local storage:', error);
+      throw error;
+    }
+  }
 }

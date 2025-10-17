@@ -335,4 +335,30 @@ export class VaultListComponent implements OnInit, OnDestroy {
       alert(`Failed to delete credentials: ${error}`);
     }
   }
+
+  async clearLocalData(): Promise<void> {
+    const confirmed = confirm(
+      'Clear Local Database?\n\n' +
+      'This will delete all locally stored credentials from this device.\n' +
+      'Your credentials will still be available on the server and other devices.\n\n' +
+      'You will need to re-sync from the server after clearing.'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      // Clear local vault data
+      await this.vaultService.clearLocalStorage();
+
+      alert('Local database cleared successfully.\n\nThe app will now reload.');
+
+      // Reload the app to reinitialize
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to clear local data:', error);
+      alert(`Failed to clear local data: ${error}`);
+    }
+  }
 }
