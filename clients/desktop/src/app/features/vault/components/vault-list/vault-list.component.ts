@@ -1,10 +1,12 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { VaultService } from '../../services/vault.service';
 import { AuthService } from '@core/auth/auth.service';
 import { SessionStorageService } from '@core/storage/session-storage.service';
+import { WebSocketService } from '@core/sync/websocket.service';
 import { ImportDialogComponent } from '../import-dialog/import-dialog.component';
 import { ImportResult } from '../../services/import.service';
 
@@ -30,13 +32,13 @@ interface VaultCredential {
   templateUrl: './vault-list.component.html',
   styleUrls: ['./vault-list.component.scss']
 })
-export class VaultListComponent implements OnInit {
+export class VaultListComponent implements OnInit, OnDestroy {
   searchQuery = signal('');
   selectedCredential = signal<VaultCredential | null>(null);
   showPassword = signal<string | null>(null);
   isLoading = signal(false);
   userEmail = signal('');
-  
+
   showAddForm = signal(false);
   addFormData = signal({
     url: '',
@@ -48,6 +50,8 @@ export class VaultListComponent implements OnInit {
   isSaving = signal(false);
 
   showImportDialog = signal(false);
+
+  private syncSubscription?: Subscription;
 
   credentials = computed(() => {
     const query = this.searchQuery();
@@ -72,7 +76,8 @@ export class VaultListComponent implements OnInit {
     public vaultService: VaultService,
     private authService: AuthService,
     private sessionStorage: SessionStorageService,
-    private router: Router
+    private router: Router,
+    private wsService: WebSocketService
   ) {}
 
   async ngOnInit() {
@@ -80,7 +85,7 @@ export class VaultListComponent implements OnInit {
     if (email) {
       this.userEmail.set(email);
     }
-    
+
     this.isLoading.set(true);
     try {
       await this.vaultService.loadCredentials();
@@ -88,6 +93,38 @@ export class VaultListComponent implements OnInit {
       console.error('Failed to load credentials:', error);
     } finally {
       this.isLoading.set(false);
+    }
+
+    // Connect to WebSocket for real-time sync
+    this.connectWebSocket();
+  }
+
+  ngOnDestroy() {
+    // Clean up WebSocket connection
+    this.syncSubscription?.unsubscribe();
+    this.wsService.disconnect();
+  }
+
+  private connectWebSocket() {
+    try {
+      this.wsService.connect('default');
+
+      // Listen for sync events
+      this.syncSubscription = this.wsService.getSyncEvents().subscribe(event => {
+        console.log('📥 Sync event received:', event.type);
+
+        // Auto-refresh credentials when changes detected
+        if (event.type === 'credentials_changed') {
+          console.log('🔄 Auto-refreshing credentials due to sync event');
+          this.vaultService.loadCredentials().then(() => {
+            // Show notification
+            console.log('✅ Credentials synced from another device');
+          });
+        }
+      });
+    } catch (error) {
+      console.error('❌ WebSocket connection error:', error);
+      // Continue without WebSocket - manual sync still works
     }
   }
 

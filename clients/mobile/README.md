@@ -14,6 +14,7 @@ Cross-platform password manager iOS client built with Flutter. Features end-to-e
 - ✅ Secure credential storage (iOS Keychain)
 - ✅ Authentication screens (login/register)
 - ✅ Sync with tombstone filtering
+- ✅ **Real-time sync via WebSocket** (auto-refresh when credentials change)
 
 ### In Progress
 - 🚧 Local SQLite storage
@@ -274,6 +275,44 @@ await ApiService.pullSync(
 
 Server-side filtering prevents deleted credentials from appearing in mobile sync responses.
 
+## Real-Time Sync
+
+### WebSocket Implementation
+
+The mobile client now supports real-time sync notifications via WebSocket:
+
+**WebSocketService** (`lib/services/websocket_service.dart`):
+```dart
+// Connect to WebSocket
+final wsService = WebSocketService();
+await wsService.connect(zone: 'default');
+
+// Listen for sync events
+wsService.syncEvents.listen((event) {
+  if (event.type == 'credentials_changed') {
+    // Automatically refresh credentials
+    loadCredentials();
+  }
+});
+```
+
+### Features
+
+1. **Auto-connect on vault unlock** - WebSocket connects when vault screen loads
+2. **Auto-refresh on changes** - Credentials automatically reload when other devices sync
+3. **Automatic reconnection** - Reconnects every 5 seconds if connection drops
+4. **User notifications** - Shows snackbar when credentials sync from another device
+5. **Graceful fallback** - Manual sync still works if WebSocket fails
+
+### How It Works
+
+1. Server broadcasts sync events when credentials change (add/edit/delete)
+2. All connected clients for that user receive the event
+3. Clients automatically pull latest credentials from server
+4. UI updates with new credential list
+
+This provides a seamless multi-device experience where changes on one device instantly appear on all others.
+
 ## Next Steps
 
 1. ✅ Set up project structure
@@ -282,10 +321,11 @@ Server-side filtering prevents deleted credentials from appearing in mobile sync
 4. ✅ Build authentication screens
 5. ✅ Add biometric authentication
 6. ✅ Implement sync with tombstone filtering
-7. ⏳ Implement local SQLite storage
-8. ⏳ Build vault unlock screen
-9. ⏳ Build credential list screen
-10. ⏳ Add import functionality (future)
+7. ✅ Add real-time WebSocket sync
+8. ⏳ Implement local SQLite storage
+9. ⏳ Build vault unlock screen
+10. ⏳ Build credential list screen
+11. ⏳ Add import functionality (future)
 
 ## License
 

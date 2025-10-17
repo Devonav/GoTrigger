@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../shared/models/credential.dart';
 import '../../services/api_service.dart';
+import '../../services/websocket_service.dart';
 
 class VaultListScreen extends StatefulWidget {
   const VaultListScreen({super.key});
@@ -12,20 +14,57 @@ class VaultListScreen extends StatefulWidget {
 
 class _VaultListScreenState extends State<VaultListScreen> {
   final _searchController = TextEditingController();
+  final _wsService = WebSocketService();
   List<Credential> _credentials = [];
   List<Credential> _filteredCredentials = [];
   bool _isLoading = true;
+  StreamSubscription? _syncSubscription;
 
   @override
   void initState() {
     super.initState();
     _loadCredentials();
+    _connectWebSocket();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _syncSubscription?.cancel();
+    _wsService.dispose();
     super.dispose();
+  }
+
+  /// Connect to WebSocket for real-time sync notifications
+  Future<void> _connectWebSocket() async {
+    try {
+      await _wsService.connect(zone: 'default');
+
+      // Listen for sync events
+      _syncSubscription = _wsService.syncEvents.listen((event) {
+        debugPrint('📥 Sync event received: ${event.type}');
+
+        // Auto-refresh credentials when changes detected
+        if (event.type == 'credentials_changed') {
+          debugPrint('🔄 Auto-refreshing credentials due to sync event');
+          _loadCredentials();
+
+          // Show snackbar notification
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Credentials synced from another device'),
+                duration: Duration(seconds: 2),
+                backgroundColor: Colors.blue,
+              ),
+            );
+          }
+        }
+      });
+    } catch (e) {
+      debugPrint('❌ WebSocket connection error: $e');
+      // Continue without WebSocket - manual sync still works
+    }
   }
 
   Future<void> _loadCredentials() async {

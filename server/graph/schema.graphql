@@ -1,0 +1,177 @@
+# GraphQL Schema for Password Sync
+
+type Query {
+  # Get sync manifest for a zone
+  syncManifest(zone: String = "default"): SyncManifest!
+
+  # Pull sync data with flexible filtering
+  pullSync(input: PullSyncInput!): PullSyncResponse!
+
+  # Get specific credential metadata
+  credentialMetadata(uuid: String!): CredentialMetadata
+
+  # List all credentials with filtering
+  credentials(
+    zone: String = "default"
+    includeTombstoned: Boolean = false
+    sinceGenCount: Int = 0
+  ): [CredentialMetadata!]!
+
+  # Get crypto keys with filtering
+  cryptoKeys(
+    zone: String = "default"
+    includeTombstoned: Boolean = false
+    sinceGenCount: Int = 0
+  ): [CryptoKey!]!
+
+  # Get sync records with filtering
+  syncRecords(
+    zone: String = "default"
+    includeTombstoned: Boolean = false
+    sinceGenCount: Int = 0
+  ): [SyncRecord!]!
+}
+
+type Mutation {
+  # Push sync data to server
+  pushSync(input: PushSyncInput!): PushSyncResponse!
+
+  # Delete all credentials for user
+  deleteAllCredentials(zone: String = "default"): DeleteAllResponse!
+
+  # Delete specific credential
+  deleteCredential(uuid: String!, zone: String = "default"): DeleteResponse!
+}
+
+# Input Types
+
+input PullSyncInput {
+  zone: String = "default"
+  lastGenCount: Int!
+  includeTombstoned: Boolean = false
+}
+
+input PushSyncInput {
+  zone: String!
+  keys: [CryptoKeyInput!]!
+  credentialMetadata: [CredentialMetadataInput!]!
+  syncRecords: [SyncRecordInput!]!
+}
+
+input CryptoKeyInput {
+  itemUUID: String!
+  keyClass: Int!
+  keyType: Int!
+  label: String
+  applicationLabel: String
+  data: String!
+  usageFlags: String!
+  accessGroup: String
+  tombstone: Boolean
+}
+
+input CredentialMetadataInput {
+  itemUUID: String!
+  server: String!
+  account: String!
+  protocol: Int!
+  port: Int!
+  path: String
+  label: String
+  accessGroup: String
+  passwordKeyUUID: String!
+  metadataKeyUUID: String
+  tombstone: Boolean
+}
+
+input SyncRecordInput {
+  itemUUID: String!
+  parentKeyUUID: String
+  wrappedKey: String!
+  encItem: String!
+  encVersion: Int
+  contextID: String
+  tombstone: Boolean
+}
+
+# Response Types
+
+type SyncManifest {
+  zone: String!
+  genCount: Int!
+  digest: String
+  signerID: String
+}
+
+type PullSyncResponse {
+  keys: [CryptoKey!]!
+  credentialMetadata: [CredentialMetadata!]!
+  syncRecords: [SyncRecord!]!
+  genCount: Int!
+}
+
+type PushSyncResponse {
+  genCount: Int!
+  synced: Int!
+}
+
+type DeleteAllResponse {
+  genCount: Int!
+  deleted: Int!
+  message: String!
+}
+
+type DeleteResponse {
+  success: Boolean!
+  message: String!
+}
+
+# Data Types
+
+type CryptoKey {
+  id: String!
+  itemUUID: String!
+  keyClass: Int!
+  keyType: Int!
+  label: String
+  applicationLabel: String
+  data: String!
+  usageFlags: String!
+  accessGroup: String!
+  genCount: Int!
+  tombstone: Boolean!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type CredentialMetadata {
+  id: String!
+  itemUUID: String!
+  server: String!
+  account: String!
+  protocol: Int!
+  port: Int!
+  path: String
+  label: String
+  accessGroup: String!
+  passwordKeyUUID: String!
+  metadataKeyUUID: String
+  genCount: Int!
+  tombstone: Boolean!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type SyncRecord {
+  id: String!
+  itemUUID: String!
+  parentKeyUUID: String
+  wrappedKey: String!
+  encItem: String!
+  encVersion: Int!
+  contextID: String!
+  genCount: Int!
+  tombstone: Boolean!
+  createdAt: String!
+  updatedAt: String!
+}
