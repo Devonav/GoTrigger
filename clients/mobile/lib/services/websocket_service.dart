@@ -33,7 +33,7 @@ class SyncEvent {
 
 /// WebSocket Service - Handles real-time sync notifications
 class WebSocketService {
-  static const String _baseWsUrl = 'ws://localhost:8080/api/v1';
+  static const String _baseWsUrl = 'ws://192.168.86.22:8080/api/v1';
   static final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   WebSocketChannel? _channel;
@@ -64,14 +64,11 @@ class WebSocketService {
 
       _currentZone = zone;
 
-      // Create WebSocket connection with Authorization header
-      // Note: web_socket_channel supports headers on native platforms
-      final wsUrl = '$_baseWsUrl/sync/live?zone=$zone';
+      // Create WebSocket connection with Authorization header in URL
+      // Pass token as query parameter since web_socket_channel 3.0 doesn't support headers in connect()
+      final wsUrl = '$_baseWsUrl/sync/live?zone=$zone&token=$token';
       _channel = WebSocketChannel.connect(
         Uri.parse(wsUrl),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
       );
 
       _isConnected = true;
