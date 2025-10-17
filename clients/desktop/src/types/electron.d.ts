@@ -25,6 +25,7 @@ interface DatabaseAPI {
   setConfig: (key: string, value: string) => Promise<{ success: boolean; error?: string }>;
   getConfig: (key: string) => Promise<{ success: boolean; value?: string | null; error?: string }>;
   close: () => Promise<{ success: boolean; error?: string }>;
+  clearDatabase: () => Promise<{ success: boolean; error?: string }>;
 }
 
 interface BiometricAPI {

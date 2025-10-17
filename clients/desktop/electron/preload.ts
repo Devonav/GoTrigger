@@ -35,6 +35,7 @@ export interface DatabaseAPI {
   setConfig: (key: string, value: string) => Promise<{ success: boolean; error?: string }>;
   getConfig: (key: string) => Promise<{ success: boolean; value?: string | null; error?: string }>;
   close: () => Promise<{ success: boolean; error?: string }>;
+  clearDatabase: () => Promise<{ success: boolean; error?: string }>;
 }
 
 export interface ElectronAPI {
@@ -85,11 +86,12 @@ contextBridge.exposeInMainWorld('electron', {
     updateSyncManifest: (manifest: any) => ipcRenderer.invoke('db:updateSyncManifest', manifest),
     getSyncManifest: (zone: string) => ipcRenderer.invoke('db:getSyncManifest', zone),
     
-    setSyncState: (zone: string, gencount: number, digest: string) => 
+    setSyncState: (zone: string, gencount: number, digest: string) =>
       ipcRenderer.invoke('db:setSyncState', zone, gencount, digest),
     getSyncState: (zone: string) => ipcRenderer.invoke('db:getSyncState', zone),
     setConfig: (key: string, value: string) => ipcRenderer.invoke('db:setConfig', key, value),
     getConfig: (key: string) => ipcRenderer.invoke('db:getConfig', key),
     close: () => ipcRenderer.invoke('db:close'),
+    clearDatabase: () => ipcRenderer.invoke('db:clearDatabase'),
   }
 });

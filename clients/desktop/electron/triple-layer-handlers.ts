@@ -337,9 +337,28 @@ export function setupTripleLayerHandlers(): void {
         signerID: row.signerID,
         updatedAt: row.updated_at
       };
-      
+
       return { success: true, manifest };
     } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+
+  // Clear Database - Delete all local data
+  ipcMain.handle('db:clearDatabase', async () => {
+    try {
+      const db = getDatabase();
+
+      // Delete all data from tables
+      db.prepare('DELETE FROM ckmirror').run();
+      db.prepare('DELETE FROM inet').run();
+      db.prepare('DELETE FROM keys').run();
+      db.prepare('DELETE FROM ckmanifest').run();
+
+      console.log('✅ Local database cleared successfully');
+      return { success: true };
+    } catch (error) {
+      console.error('❌ Failed to clear database:', error);
       return { success: false, error: String(error) };
     }
   });
