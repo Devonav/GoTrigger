@@ -11,15 +11,21 @@ Cross-platform password manager iOS client built with Flutter. Features end-to-e
 - ✅ End-to-end encryption (ChaCha20-Poly1305)
 - ✅ Credential model matching desktop client
 - ✅ **Face ID / Touch ID biometric unlock**
+- ✅ **Direct vault access with biometric login** (skips master password screen)
 - ✅ Secure credential storage (iOS Keychain)
-- ✅ Authentication screens (login/register)
+- ✅ Authentication screens (login/register/home)
+- ✅ **Vault list screen** with credential display
+- ✅ **Pull-to-refresh** sync functionality
+- ✅ **Search credentials** by name, username, or URL
+- ✅ **Copy username/password** to clipboard
 - ✅ Sync with tombstone filtering
 - ✅ **Real-time sync via WebSocket** (auto-refresh when credentials change)
+- ✅ **Cross-platform sync** with desktop client
 
 ### In Progress
-- 🚧 Local SQLite storage
-- 🚧 Vault unlock screen
-- 🚧 Credential list and management
+- 🚧 Add/Edit credential functionality
+- 🚧 Delete credential functionality
+- 🚧 Local SQLite storage for offline access
 
 ## Tech Stack
 
@@ -138,9 +144,10 @@ lib/
 ## Getting Started
 
 ### Prerequisites
-- Flutter SDK 3.8.1 or higher
-- Xcode 14+ (for iOS development)
-- iOS 12.0+ device or simulator
+- Flutter SDK 3.32.5 or higher
+- Xcode 16.4+ (for iOS development)
+- iOS 13.0+ device or simulator (iOS 26 beta supported)
+- Go server running on localhost:8080 or network IP
 
 ### Installation
 
@@ -150,15 +157,45 @@ lib/
    ```
 
 2. **Configure server endpoint:**
-   Edit `lib/services/api_service.dart` and `lib/services/graphql_service.dart` to point to your server:
+
+   **For iOS Simulator:**
+   - Leave endpoints as `http://localhost:8080` (default)
+
+   **For Physical iOS Device:**
+   - Find your Mac's IP address: `ipconfig getifaddr en0`
+   - Update endpoints in these files to use your Mac's IP:
+     - `lib/services/api_service.dart`: Change `localhost` to `192.168.x.x`
+     - `lib/services/websocket_service.dart`: Change `ws://localhost` to `ws://192.168.x.x`
+     - `lib/services/graphql_service.dart`: Change `localhost` to `192.168.x.x`
+
+   Example:
    ```dart
-   static const String _baseUrl = 'http://your-server:8080/api';
-   static const String _defaultEndpoint = 'http://your-server:8080/graphql';
+   // api_service.dart
+   static const String _baseUrl = 'http://192.168.86.22:8080/api/v1';
+
+   // websocket_service.dart
+   static const String _baseWsUrl = 'ws://192.168.86.22:8080/api/v1';
+
+   // graphql_service.dart
+   static const String _defaultEndpoint = 'http://192.168.86.22:8080/graphql';
    ```
 
-3. **Run on iOS:**
+3. **Configure iOS deployment target:**
    ```bash
-   flutter run -d ios
+   cd ios
+   # Edit Podfile: Uncomment and set platform :ios, '13.0'
+   pod install
+   cd ..
+   ```
+
+4. **Run on iOS:**
+   ```bash
+   # Clean and rebuild
+   flutter clean
+   flutter pub get
+
+   # Run on device or simulator
+   flutter run
    ```
 
 ### iOS Configuration
@@ -313,6 +350,34 @@ wsService.syncEvents.listen((event) {
 
 This provides a seamless multi-device experience where changes on one device instantly appear on all others.
 
+## Troubleshooting
+
+### Common Issues
+
+**1. White Screen / Dart VM Initialization Error**
+- Update Flutter to 3.32.5+ for iOS 26 beta support
+- Run `flutter clean && flutter pub get`
+- Check iOS deployment target is 13.0+
+
+**2. Login Works but No Credentials Sync**
+- Verify server is running: `http://YOUR_IP:8080/api/v1/health`
+- Check IP address configuration in service files
+- Ensure both desktop and mobile are using the same server
+
+**3. WebSocket Connection Failed**
+- Update auth middleware to support token in query params (already implemented)
+- Check server logs for WebSocket connection attempts
+- Verify firewall isn't blocking WebSocket connections
+
+**4. Duplicate Credentials After Import**
+- Desktop local storage persists after "Delete All" on mobile
+- Clear desktop local database: `rm -rf ~/Library/Application\ Support/password-sync-desktop/`
+- Or use "Delete All" button in desktop app (deletes both local and server data)
+
+**5. Face ID Doesn't Skip Master Password Screen**
+- This is now fixed - biometric login goes directly to `/vault-list`
+- Update to latest version if issue persists
+
 ## Next Steps
 
 1. ✅ Set up project structure
@@ -322,10 +387,12 @@ This provides a seamless multi-device experience where changes on one device ins
 5. ✅ Add biometric authentication
 6. ✅ Implement sync with tombstone filtering
 7. ✅ Add real-time WebSocket sync
-8. ⏳ Implement local SQLite storage
-9. ⏳ Build vault unlock screen
-10. ⏳ Build credential list screen
-11. ⏳ Add import functionality (future)
+8. ✅ Build vault unlock screen
+9. ✅ Build credential list screen
+10. ✅ Implement cross-platform sync with desktop
+11. ⏳ Add/Edit credential functionality
+12. ⏳ Implement local SQLite storage for offline access
+13. ⏳ Add import functionality (future)
 
 ## License
 
@@ -338,5 +405,5 @@ This is the iOS mobile client. See the main project README for overall architect
 ---
 
 **Last Updated**: October 2025
-**Status**: Initial Setup Complete
-**Platform**: iOS only
+**Status**: ✅ Fully Functional - Sync, Biometrics, Real-time Updates
+**Platform**: iOS 13.0+ (tested on iOS 26 beta)
