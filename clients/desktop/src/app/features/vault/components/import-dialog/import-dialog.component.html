@@ -52,6 +52,15 @@
         </div>
       </div>
 
+      <!-- Master Password Notice (only shown during import) -->
+      <div class="password-notice" *ngIf="isImporting()">
+        <div class="notice-icon">🔐</div>
+        <div class="notice-text">
+          <strong>Master Password Required:</strong>
+          <p>You may be prompted to enter your master password to encrypt the imported credentials.</p>
+        </div>
+      </div>
+
       <!-- Import Button -->
       <div class="actions">
         <button

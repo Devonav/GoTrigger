@@ -318,9 +318,12 @@ export class VaultListComponent implements OnInit, OnDestroy {
 
   async deleteAllCredentials(): Promise<void> {
     const confirmed = confirm(
-      'Are you sure you want to delete ALL credentials from the server?\n\n' +
-      'This will mark all credentials as deleted on the server. ' +
-      'This action affects all devices synced to your account.'
+      'Delete ALL Credentials?\n\n' +
+      'This will:\n' +
+      '• Delete all credentials from the server\n' +
+      '• Clear all local data on this device\n' +
+      '• Affect all devices synced to your account\n\n' +
+      'This action cannot be undone!'
     );
 
     if (!confirmed) {
@@ -328,37 +331,19 @@ export class VaultListComponent implements OnInit, OnDestroy {
     }
 
     try {
+      // Delete from server first
       await this.vaultService.deleteAllCredentials();
-      alert('All credentials have been deleted successfully.');
-    } catch (error) {
-      console.error('Failed to delete all credentials:', error);
-      alert(`Failed to delete credentials: ${error}`);
-    }
-  }
 
-  async clearLocalData(): Promise<void> {
-    const confirmed = confirm(
-      'Clear Local Database?\n\n' +
-      'This will delete all locally stored credentials from this device.\n' +
-      'Your credentials will still be available on the server and other devices.\n\n' +
-      'You will need to re-sync from the server after clearing.'
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      // Clear local vault data
+      // Then clear local database
       await this.vaultService.clearLocalStorage();
 
-      alert('Local database cleared successfully.\n\nThe app will now reload.');
+      alert('All credentials deleted successfully.\n\nThe app will now reload.');
 
       // Reload the app to reinitialize
       window.location.reload();
     } catch (error) {
-      console.error('Failed to clear local data:', error);
-      alert(`Failed to clear local data: ${error}`);
+      console.error('Failed to delete all credentials:', error);
+      alert(`Failed to delete credentials: ${error}`);
     }
   }
 }
