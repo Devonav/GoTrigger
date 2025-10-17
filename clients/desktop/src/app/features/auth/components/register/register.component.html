@@ -1,0 +1,100 @@
+<div class="register-container">
+  <div class="register-card">
+    <h1>DeeplyProfound</h1>
+    <p class="subtitle">Create your account</p>
+
+    @if (errorMessage()) {
+      <div class="error-message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()" class="register-form">
+      <input
+        id="email"
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        placeholder="Email"
+        [disabled]="isLoading()"
+        required
+        autocomplete="email"
+      />
+
+      <div class="password-input">
+        <input
+          id="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="Password"
+          [disabled]="isLoading()"
+          required
+          autocomplete="new-password"
+        />
+        <button
+          type="button"
+          class="toggle-password"
+          (click)="togglePasswordVisibility()"
+          [disabled]="isLoading()"
+        >
+          <svg *ngIf="!showPassword()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg *ngIf="showPassword()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="password-input">
+        <input
+          id="confirmPassword"
+          [type]="showConfirmPassword() ? 'text' : 'password'"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          placeholder="Confirm password"
+          [disabled]="isLoading()"
+          required
+          autocomplete="new-password"
+        />
+        <button
+          type="button"
+          class="toggle-password"
+          (click)="toggleConfirmPasswordVisibility()"
+          [disabled]="isLoading()"
+        >
+          <svg *ngIf="!showConfirmPassword()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg *ngIf="showConfirmPassword()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+        </button>
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <div class="spinner"></div>
+          Creating...
+        } @else {
+          Create Account
+        }
+      </button>
+    </form>
+
+    <div class="register-footer">
+      <span>Already have an account?</span>
+      <button type="button" class="btn-link" (click)="goToLogin()">Sign in</button>
+    </div>
+  </div>
+</div>

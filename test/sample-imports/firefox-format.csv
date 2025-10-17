@@ -1,0 +1,7 @@
+url,username,password,httpRealm,formActionOrigin,guid,timeCreated,timeLastUsed,timePasswordChanged
+https://www.reddit.com,redditor_john,RedditPass123!,,,{abc123-def456-ghi789},1633024800000,1696118400000,1696118400000
+https://discord.com,john#1234,DiscordSecure456#,,,{def456-ghi789-jkl012},1633024900000,1696118500000,1696118500000
+https://www.spotify.com,john@example.com,SpotifyMusic789$,,,{ghi789-jkl012-mno345},1633025000000,1696118600000,1696118600000
+https://www.youtube.com,johndoe2024,YouTubePass2024%,,,{jkl012-mno345-pqr678},1633025100000,1696118700000,1696118700000
+https://www.twitch.tv,streamer_john,TwitchLive999&,,,{mno345-pqr678-stu901},1633025200000,1696118800000,1696118800000
+https://www.amazon.com,john.doe@email.com,AmazonPrime111!,,,{pqr678-stu901-vwx234},1633025300000,1696118900000,1696118900000

@@ -1,0 +1,7 @@
+url,username,password,totp,extra,name,grouping,fav
+https://www.facebook.com/login.php,john@example.com,FBPass123!,,My personal Facebook account,Facebook,Social,1
+https://www.twitter.com/login,@johndoe,TwitterPass456#,,Work Twitter account,Twitter,Work,0
+https://github.com/login,john@example.com,GitHubSecure789$,JBSWY3DPEHPK3PXP,Developer account with 2FA,GitHub,Development,1
+https://www.linkedin.com/login,john.doe@company.com,LinkedInPass2024%,,Professional network,LinkedIn,Professional,0
+https://mail.google.com,john.doe@gmail.com,GoogleMail999&,,Primary email account,Gmail,Personal,1
+https://stackoverflow.com/users/login,johndoe,StackPass111!,,Developer Q&amp;A account,StackOverflow,Development,0

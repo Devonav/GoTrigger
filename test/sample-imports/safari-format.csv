@@ -1,0 +1,7 @@
+Title,Url,Username,Password,OTPAuth
+Netflix,https://www.netflix.com,john@example.com,NetflixPass123!,
+Apple ID,https://appleid.apple.com,john.doe@icloud.com,AppleSecure456#,
+iCloud Mail,https://www.icloud.com/mail,john.doe@icloud.com,iCloudMail789$,
+Dropbox,https://www.dropbox.com,john@example.com,DropboxCloud2024%,otpauth://totp/Dropbox:john@example.com?secret=JBSWY3DPEHPK3PXP
+Slack Workspace,https://company.slack.com,john.doe@company.com,SlackTeam999&,
+Apple Developer,https://developer.apple.com,john.doe@icloud.com,AppleDev111!,

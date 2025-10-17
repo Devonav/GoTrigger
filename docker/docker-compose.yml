@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: password-sync-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: password_sync
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # NOTE: Schema only runs on FIRST initialization (when volume is empty)
+      # To reload schema: make docker-restart-clean
+      - ../server/storage/postgres_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Uncomment for development database GUI
+  # adminer:
+  #   image: adminer:latest
+  #   container_name: password-sync-adminer
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8081:8080"
+  #   depends_on:
+  #     - postgres
+
+volumes:
+  postgres_data:
+    driver: local

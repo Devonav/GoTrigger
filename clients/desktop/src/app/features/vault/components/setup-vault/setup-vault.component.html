@@ -1,0 +1,81 @@
+<div class="setup-container">
+  <div class="setup-card">
+    @if (isGenerating()) {
+      <div class="generating">
+        <div class="spinner"></div>
+        <p>Generating your recovery phrase...</p>
+      </div>
+    } @else {
+      <div class="setup-content">
+        <div class="header">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5"></path>
+            <path d="M2 12l10 5 10-5"></path>
+          </svg>
+          <h1>Save Your Recovery Phrase</h1>
+          <p>Write down these 12 words in order. You'll need them to recover your vault if you get locked out.</p>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="error">{{ errorMessage() }}</div>
+        }
+
+        <div class="phrase-grid">
+          @for (word of recoveryPhrase(); track $index) {
+            <div class="phrase-word">
+              <span class="word-number">{{ $index + 1 }}</span>
+              <span class="word-text">{{ word }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-secondary" (click)="copyPhrase()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+          </button>
+          <button type="button" class="btn-secondary" (click)="downloadPhrase()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Download
+          </button>
+        </div>
+
+        <div class="warning">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <div>
+            <strong>Never share this phrase with anyone.</strong>
+            <p>Anyone with this phrase can access your vault. Store it securely offline.</p>
+          </div>
+        </div>
+
+        @if (!hasConfirmed()) {
+          <button type="button" class="btn-primary" (click)="confirmPhrase()">
+            I've Saved My Recovery Phrase
+          </button>
+        } @else {
+          <div class="confirmation">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <p>Great! Your vault is ready.</p>
+            <button type="button" class="btn-primary" (click)="continueToVault()">
+              Continue to Vault
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

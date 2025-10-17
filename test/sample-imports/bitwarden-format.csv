@@ -1,0 +1,6 @@
+folder,favorite,type,name,notes,fields,reprompt,login_uri,login_username,login_password,login_totp
+Social,false,login,Facebook,My Facebook account,,,https://facebook.com,user@example.com,FacebookPass123!,
+Work,false,login,Slack,Work Slack workspace,,,https://slack.com,john.doe@company.com,SlackSecure456#,
+Personal,true,login,Netflix,Streaming account,,,https://netflix.com,john@example.com,Netflix789$,
+Work,false,login,Jira,Project management,,,https://jira.atlassian.com,john.doe@company.com,JiraPass2024%,
+Personal,false,login,Amazon,Shopping account,,,https://amazon.com,john@example.com,AmazonPass999&,

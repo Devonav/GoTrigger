@@ -1,0 +1,92 @@
+name: Desktop Client
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'clients/desktop/**'
+      - '.github/workflows/desktop.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'clients/desktop/**'
+
+jobs:
+  test:
+    name: Test Desktop Client
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+        cache-dependency-path: clients/desktop/package-lock.json
+
+    - name: Install dependencies
+      working-directory: clients/desktop
+      run: npm ci
+
+    - name: Run tests
+      working-directory: clients/desktop
+      run: npm test -- --watch=false --browsers=ChromeHeadless
+
+    - name: Build Electron
+      working-directory: clients/desktop
+      run: npm run electron:build
+
+  build:
+    name: Build Desktop App
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+        cache-dependency-path: clients/desktop/package-lock.json
+
+    - name: Install dependencies
+      working-directory: clients/desktop
+      run: npm ci
+
+    - name: Build Angular
+      working-directory: clients/desktop
+      run: npm run build
+
+    - name: Build Electron
+      working-directory: clients/desktop
+      run: npm run electron:build
+
+    - name: Package for macOS
+      if: matrix.os == 'macos-latest'
+      working-directory: clients/desktop
+      run: npm run package:mac
+
+    - name: Package for Windows
+      if: matrix.os == 'windows-latest'
+      working-directory: clients/desktop
+      run: npm run package:win
+
+    - name: Package for Linux
+      if: matrix.os == 'ubuntu-latest'
+      working-directory: clients/desktop
+      run: npm run package:linux
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: desktop-${{ matrix.os }}
+        path: clients/desktop/release/*
+        retention-days: 7

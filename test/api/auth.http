@@ -1,0 +1,86 @@
+### Password Sync API - Authentication Tests
+### Make sure server is running: make run-multi
+
+@baseUrl = http://localhost:8080/api/v1
+@email = test@example.com
+@password = password123
+
+###############################################
+# 1. Register New User
+###############################################
+
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+###############################################
+# 2. Login (Get JWT)
+###############################################
+
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+###############################################
+# 3. Extract Token from Login Response
+###############################################
+
+@accessToken = {{login.response.body.access_token}}
+@refreshToken = {{login.response.body.refresh_token}}
+@userId = {{login.response.body.user_id}}
+
+###############################################
+# 4. Refresh Access Token
+###############################################
+
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refresh_token": "{{refreshToken}}"
+}
+
+###############################################
+# 5. Test Invalid Login
+###############################################
+
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "wrongpassword"
+}
+
+###############################################
+# 6. Test Invalid Email Format
+###############################################
+
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "invalid-email",
+  "password": "{{password}}"
+}
+
+###############################################
+# 7. Test Short Password
+###############################################
+
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "new@example.com",
+  "password": "short"
+}

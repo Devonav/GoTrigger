@@ -1,0 +1,10 @@
+### Password Sync API - Health Check
+### No authentication required
+
+@baseUrl = http://localhost:8080
+
+###############################################
+# Health Check (Public)
+###############################################
+
+GET {{baseUrl}}/health

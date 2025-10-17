@@ -1,0 +1,58 @@
+### Password Sync API - Device Management
+### Run auth.http first to get access token!
+
+@baseUrl = http://localhost:8080/api/v1
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+
+###############################################
+# 1. Register Device
+###############################################
+
+# @name registerDevice
+POST {{baseUrl}}/devices
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "device_name": "MacBook Pro",
+  "device_type": "desktop"
+}
+
+###############################################
+# 2. List All Devices
+###############################################
+
+GET {{baseUrl}}/devices
+Authorization: Bearer {{accessToken}}
+
+###############################################
+# 3. Register Mobile Device
+###############################################
+
+POST {{baseUrl}}/devices
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "device_name": "iPhone 15",
+  "device_type": "mobile"
+}
+
+###############################################
+# 4. Register Browser Extension
+###############################################
+
+POST {{baseUrl}}/devices
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "device_name": "Chrome Extension",
+  "device_type": "extension"
+}
+
+###############################################
+# 5. Test Unauthorized (No Token)
+###############################################
+
+GET {{baseUrl}}/devices

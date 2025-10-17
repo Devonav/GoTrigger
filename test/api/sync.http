@@ -1,0 +1,84 @@
+### Password Sync API - Encrypted Sync
+### Run auth.http first to get access token!
+
+@baseUrl = http://localhost:8080/api/v1
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+@zone = default
+
+###############################################
+# 1. Push Encrypted Credentials (Sync Upload)
+###############################################
+
+POST {{baseUrl}}/sync/push
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "zone": "{{zone}}",
+  "records": [
+    {
+      "item_uuid": "550e8400-e29b-41d4-a716-446655440001",
+      "wrapped_key": "ZW5jcnlwdGVkLWtleS1kYXRhLWhlcmU=",
+      "enc_item": "ZW5jcnlwdGVkLWNyZWRlbnRpYWwtZGF0YS1oZXJl"
+    },
+    {
+      "item_uuid": "550e8400-e29b-41d4-a716-446655440002",
+      "wrapped_key": "YW5vdGhlci1lbmNyeXB0ZWQta2V5",
+      "enc_item": "YW5vdGhlci1lbmNyeXB0ZWQtZGF0YQ=="
+    }
+  ]
+}
+
+###############################################
+# 2. Pull Encrypted Credentials (Sync Download)
+###############################################
+
+# @name pullSync
+POST {{baseUrl}}/sync/pull
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "zone": "{{zone}}",
+  "last_gencount": 0
+}
+
+###############################################
+# 3. Pull Only New Changes (Incremental)
+###############################################
+
+POST {{baseUrl}}/sync/pull
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "zone": "{{zone}}",
+  "last_gencount": 5
+}
+
+###############################################
+# 4. Push Tombstone (Delete Record)
+###############################################
+
+POST {{baseUrl}}/sync/push
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "zone": "{{zone}}",
+  "records": [
+    {
+      "item_uuid": "550e8400-e29b-41d4-a716-446655440001",
+      "wrapped_key": "",
+      "enc_item": "",
+      "tombstone": true
+    }
+  ]
+}
+
+###############################################
+# 5. Get Sync Manifest
+###############################################
+
+GET {{baseUrl}}/sync/manifest?zone={{zone}}
+Authorization: Bearer {{accessToken}}

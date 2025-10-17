@@ -1,0 +1,21 @@
+# Code owners for password-sync
+# Owner is responsible for reviewing and merging PRs
+
+# Default owner for everything
+* @Izaacapp
+
+# Backend Go code
+/cmd/ @Izaacapp
+/internal/ @Izaacapp
+/pkg/ @Izaacapp
+
+# Future client directories (when created)
+# /clients/desktop/ @desktop-team-member
+# /clients/web/ @web-team-member
+# /clients/mobile/ @mobile-team-member
+
+# CI/CD and workflows
+/.github/ @Izaacapp
+
+# Documentation
+*.md @Izaacapp

@@ -1,0 +1,116 @@
+<div class="import-overlay" (click)="closeDialog()">
+  <div class="import-dialog" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="dialog-header">
+      <h2>📥 Import Credentials</h2>
+      <button class="close-btn" (click)="closeDialog()" aria-label="Close">×</button>
+    </div>
+
+    <!-- Body -->
+    <div class="dialog-body">
+      <!-- Format Selection -->
+      <div class="form-group">
+        <label for="format-select">Import Format</label>
+        <select
+          id="format-select"
+          class="format-select"
+          [value]="selectedFormat()"
+          (change)="onFormatChange($event)"
+          [disabled]="isImporting()">
+          <option *ngFor="let format of formats()" [value]="format.id">
+            {{ format.name }}
+          </option>
+        </select>
+        <small class="format-description" *ngIf="formats().length > 0">
+          {{ getSelectedFormatDescription() }}
+        </small>
+      </div>
+
+      <!-- File Selection -->
+      <div class="form-group">
+        <label for="file-input">Select CSV File</label>
+        <div class="file-input-wrapper">
+          <input
+            id="file-input"
+            type="file"
+            accept=".csv"
+            (change)="onFileSelected($event)"
+            [disabled]="isImporting()"
+            class="file-input">
+          <label for="file-input" class="file-input-label">
+            <span *ngIf="!selectedFile()">Choose File</span>
+            <span *ngIf="selectedFile()" class="file-name">📄 {{ selectedFile()!.name }}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Security Warning -->
+      <div class="security-warning">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-text">
+          <strong>Security Reminder:</strong> Delete your CSV file after import to prevent unauthorized access to your passwords.
+        </div>
+      </div>
+
+      <!-- Import Button -->
+      <div class="actions">
+        <button
+          class="btn btn-secondary"
+          (click)="closeDialog()"
+          [disabled]="isImporting()">
+          Cancel
+        </button>
+        <button
+          class="btn btn-primary"
+          (click)="importFile()"
+          [disabled]="!selectedFile() || isImporting()">
+          <span *ngIf="!isImporting()">Import</span>
+          <span *ngIf="isImporting()" class="loading">
+            <span class="spinner"></span> Importing...
+          </span>
+        </button>
+      </div>
+
+      <!-- Results -->
+      <div class="import-results" *ngIf="showResult() && importResult()">
+        <div class="result-header" [ngClass]="getResultClass()">
+          <span class="result-icon">{{ getResultIcon() }}</span>
+          <h3>Import {{ importResult()!.success ? 'Complete' : 'Failed' }}</h3>
+        </div>
+
+        <div class="result-stats">
+          <div class="stat">
+            <span class="stat-value success">{{ importResult()!.imported }}</span>
+            <span class="stat-label">Imported</span>
+          </div>
+          <div class="stat" *ngIf="importResult()!.skipped > 0">
+            <span class="stat-value warning">{{ importResult()!.skipped }}</span>
+            <span class="stat-label">Skipped</span>
+          </div>
+          <div class="stat" *ngIf="importResult()!.failed > 0">
+            <span class="stat-value error">{{ importResult()!.failed }}</span>
+            <span class="stat-label">Failed</span>
+          </div>
+        </div>
+
+        <!-- Errors -->
+        <div class="result-errors" *ngIf="importResult()!.errors.length > 0">
+          <h4>Errors & Warnings:</h4>
+          <ul class="error-list">
+            <li *ngFor="let error of importResult()!.errors.slice(0, 10)">
+              {{ error }}
+            </li>
+            <li *ngIf="importResult()!.errors.length > 10" class="more-errors">
+              ... and {{ importResult()!.errors.length - 10 }} more errors
+            </li>
+          </ul>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" *ngIf="importResult()!.success && importResult()!.imported > 0">
+          <p>✅ Successfully imported {{ importResult()!.imported }} credential(s) to your vault.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
