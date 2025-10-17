@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/deeplyprofound/password-sync/pkg/models"
+	"github.com/deeplyprofound/password-sync/server/api/websocket"
 	"github.com/deeplyprofound/password-sync/server/domain/sync"
 	"github.com/deeplyprofound/password-sync/server/storage"
 	"github.com/gin-gonic/gin"
@@ -12,10 +14,15 @@ import (
 
 type SyncHandler struct {
 	pgStore *storage.PostgresStore
+	hub     *websocket.Hub
 }
 
 func NewSyncHandler(pgStore *storage.PostgresStore) *SyncHandler {
 	return &SyncHandler{pgStore: pgStore}
+}
+
+func (sh *SyncHandler) SetHub(hub *websocket.Hub) {
+	sh.hub = hub
 }
 
 func stringToPtr(s string) *string {
@@ -487,6 +494,17 @@ func (h *SyncHandler) PushSync(c *gin.Context) {
 	if err := h.pgStore.UpsertSyncState(userID.(string), req.Zone, currentGenCount, digest); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Broadcast sync event to connected clients
+	if h.hub != nil && pushedCount > 0 {
+		h.hub.BroadcastSyncEvent(&websocket.SyncEvent{
+			Type:      "credentials_changed",
+			UserID:    userID.(string),
+			Zone:      req.Zone,
+			GenCount:  currentGenCount,
+			Timestamp: time.Now().Unix(),
+		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{

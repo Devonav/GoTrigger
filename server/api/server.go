@@ -6,23 +6,32 @@ import (
 
 	"github.com/deeplyprofound/password-sync/server/api/handlers"
 	"github.com/deeplyprofound/password-sync/server/api/middleware"
+	"github.com/deeplyprofound/password-sync/server/api/websocket"
 	"github.com/deeplyprofound/password-sync/server/storage"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	pgStore       *storage.PostgresStore
-	authHandler   *handlers.AuthService
-	syncHandler   *handlers.SyncHandler
-	deviceHandler *handlers.DeviceHandler
-	router        *gin.Engine
+	pgStore         *storage.PostgresStore
+	authHandler     *handlers.AuthService
+	syncHandler     *handlers.SyncHandler
+	deviceHandler   *handlers.DeviceHandler
+	wsHandler       *handlers.WebSocketHandler
+	router          *gin.Engine
+	Hub             *websocket.Hub
 }
 
 func NewServerWithAuth(pgStore *storage.PostgresStore) *Server {
+	// Create WebSocket hub and start it
+	hub := websocket.NewHub()
+	go hub.Run()
+
 	authHandler := handlers.NewAuthService(pgStore)
 	syncHandler := handlers.NewSyncHandler(pgStore)
+	syncHandler.SetHub(hub) // Connect sync handler to WebSocket hub for broadcasting
 	deviceHandler := handlers.NewDeviceHandler(pgStore)
+	wsHandler := handlers.NewWebSocketHandler(hub)
 
 	router := gin.Default()
 
@@ -40,7 +49,9 @@ func NewServerWithAuth(pgStore *storage.PostgresStore) *Server {
 		authHandler:   authHandler,
 		syncHandler:   syncHandler,
 		deviceHandler: deviceHandler,
+		wsHandler:     wsHandler,
 		router:        router,
+		Hub:           hub,
 	}
 
 	s.setupRoutes()
@@ -71,6 +82,9 @@ func (s *Server) setupRoutes() {
 		protected.POST("/sync/pull", s.syncHandler.PullSync)
 		protected.POST("/sync/push", s.syncHandler.PushSync)
 		protected.DELETE("/sync/credentials", s.syncHandler.DeleteAllCredentials)
+
+		// WebSocket for real-time sync
+		protected.GET("/sync/live", s.wsHandler.HandleWebSocket)
 
 		// Device management
 		protected.GET("/devices", s.deviceHandler.ListDevices)
