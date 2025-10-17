@@ -33,7 +33,7 @@ export class WebSocketService {
       return;
     }
 
-    const token = this.authService.getToken();
+    const token = this.authService.getAccessToken();
     if (!token) {
       console.error('❌ No auth token found for WebSocket connection');
       return;
@@ -41,21 +41,14 @@ export class WebSocketService {
 
     try {
       this.currentZone = zone;
-      const wsUrl = `${this.WS_URL}?zone=${zone}`;
+      // Pass token as query parameter for authentication
+      const wsUrl = `${this.WS_URL}?zone=${zone}&token=${token}`;
 
       this.ws = new WebSocket(wsUrl);
 
-      // Send Authorization header in first message after connection
-      // Note: Native WebSocket doesn't support custom headers, so we'll send it as first message
       this.ws.onopen = () => {
         console.log('✅ WebSocket connected:', zone);
         this.isConnected = true;
-
-        // Send auth token as first message
-        this.ws?.send(JSON.stringify({
-          type: 'auth',
-          token: token
-        }));
       };
 
       this.ws.onmessage = (event) => {

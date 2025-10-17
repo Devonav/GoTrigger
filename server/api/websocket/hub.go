@@ -32,13 +32,13 @@ type Hub struct {
 	clients map[string]map[*Client]bool
 
 	// Register requests from clients
-	register chan *Client
+	Register chan *Client
 
 	// Unregister requests from clients
-	unregister chan *Client
+	Unregister chan *Client
 
 	// Broadcast messages to clients
-	broadcast chan *SyncEvent
+	Broadcast chan *SyncEvent
 
 	mu sync.RWMutex
 }
@@ -47,9 +47,9 @@ type Hub struct {
 func NewHub() *Hub {
 	return &Hub{
 		clients:    make(map[string]map[*Client]bool),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		broadcast:  make(chan *SyncEvent, 256),
+		Register:   make(chan *Client),
+		Unregister: make(chan *Client),
+		Broadcast:  make(chan *SyncEvent, 256),
 	}
 }
 
@@ -57,7 +57,7 @@ func NewHub() *Hub {
 func (h *Hub) Run() {
 	for {
 		select {
-		case client := <-h.register:
+		case client := <-h.Register:
 			h.mu.Lock()
 			if h.clients[client.UserID] == nil {
 				h.clients[client.UserID] = make(map[*Client]bool)
@@ -67,7 +67,7 @@ func (h *Hub) Run() {
 			log.Printf("📱 Client connected: user=%s, total_connections=%d",
 				client.UserID, len(h.clients[client.UserID]))
 
-		case client := <-h.unregister:
+		case client := <-h.Unregister:
 			h.mu.Lock()
 			if clients, ok := h.clients[client.UserID]; ok {
 				if _, ok := clients[client]; ok {
@@ -83,7 +83,7 @@ func (h *Hub) Run() {
 			h.mu.Unlock()
 			log.Printf("📱 Client disconnected: user=%s", client.UserID)
 
-		case event := <-h.broadcast:
+		case event := <-h.Broadcast:
 			h.mu.RLock()
 			clients := h.clients[event.UserID]
 			h.mu.RUnlock()
@@ -114,13 +114,13 @@ func (h *Hub) Run() {
 
 // BroadcastSyncEvent sends a sync event to all connected clients for a user
 func (h *Hub) BroadcastSyncEvent(event *SyncEvent) {
-	h.broadcast <- event
+	h.Broadcast <- event
 }
 
 // ReadPump reads messages from the WebSocket connection
 func (c *Client) ReadPump() {
 	defer func() {
-		c.Hub.unregister <- c
+		c.Hub.Unregister <- c
 		c.Conn.Close()
 	}()
 

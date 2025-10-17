@@ -8,7 +8,7 @@ class ApiService {
   // Use localhost for local development
   // For iOS simulator, localhost works fine
   // For physical device, use your computer's IP address
-  static const String _baseUrl = 'http://localhost:8080/api/v1';
+  static const String _baseUrl = 'http://192.168.86.22:8080/api/v1';
   static final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   /// Register new user

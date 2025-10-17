@@ -7,7 +7,7 @@ class GraphQLService {
   // Use localhost for local development
   // For iOS simulator, localhost works fine
   // For physical device, use your computer's IP address
-  static const String _defaultEndpoint = 'http://localhost:8080/graphql';
+  static const String _defaultEndpoint = 'http://192.168.86.22:8080/graphql';
   static final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   static GraphQLClient? _client;

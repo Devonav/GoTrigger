@@ -97,7 +97,7 @@ make test
 #### Run Desktop App
 ```bash
 # Terminal 1: Start server
-make run
+make run-multi
 
 # Terminal 2: Start desktop app
 cd clients/desktop
@@ -106,6 +106,52 @@ npm run electron:dev
 ```
 
 See [clients/desktop/README.md](clients/desktop/README.md) for more details.
+
+### Mobile Client (Flutter)
+
+#### Prerequisites
+- Flutter 3.32.5+
+- Xcode 16.4+ (for iOS)
+- iOS 13.0+ deployment target
+
+#### Run Mobile App
+```bash
+# Terminal 1: Start server (if not already running)
+cd /Users/devonvillalona/password-sync
+make docker-up
+make run-multi
+
+# Terminal 2: Run Flutter app
+cd clients/mobile
+flutter pub get
+flutter run  # For physical device or simulator
+```
+
+#### Important Setup Notes
+
+**For Physical iOS Devices:**
+1. Update API endpoints to use your Mac's IP address (not localhost)
+   - `lib/services/api_service.dart` - Change `localhost` to your Mac IP (e.g., `192.168.86.22`)
+   - `lib/services/websocket_service.dart` - Change `ws://localhost` to `ws://YOUR_MAC_IP`
+   - `lib/services/graphql_service.dart` - Change `localhost` to your Mac IP
+
+2. Configure iOS deployment target:
+   - Open `ios/Podfile` and ensure `platform :ios, '13.0'`
+   - Run `cd ios && pod install && cd ..`
+
+**Clearing Local Data:**
+- **Desktop**: Delete SQLite database at `~/Library/Application Support/password-sync-desktop/vault.db*`
+- **Server**: Clean database with `make docker-restart-clean`
+
+#### Features
+- ✅ Face ID / Touch ID biometric authentication
+- ✅ End-to-end encrypted credential sync
+- ✅ Real-time WebSocket sync notifications
+- ✅ Pull-to-refresh credential list
+- ✅ Secure credential storage
+- ✅ Cross-platform sync with desktop
+
+See [clients/mobile/README.md](clients/mobile/README.md) for more details.
 
 ## 📚 Documentation
 
@@ -179,14 +225,17 @@ Apple's proven patterns are validated with comprehensive tests:
 - [x] Core storage schema
 - [x] Layered encryption (wrappedkey + encitem)
 - [x] Sync engine with generation counters
-- [x] Trusted peer management
 - [x] REST API
-- [x] Electron desktop client (Angular) - **In Progress**
-- [ ] Desktop UI components (credentials list, sync status)
-- [ ] WebSocket real-time sync
-- [ ] Mobile clients (iOS/Android)
+- [x] Electron desktop client (Angular)
+- [x] Desktop UI components (credentials list, import from 45+ password managers)
+- [x] WebSocket real-time sync
+- [x] Flutter mobile client (iOS)
+- [x] Biometric authentication (Face ID/Touch ID)
+- [x] Cross-platform credential sync
+- [ ] Mobile Android support
 - [ ] Browser extensions
 - [ ] End-to-end encrypted sharing
+- [ ] Trusted peer management
 
 ## License
 
