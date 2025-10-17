@@ -292,7 +292,6 @@ export class VaultListComponent implements OnInit {
 
     try {
       await this.vaultService.deleteAllCredentials();
-      await this.vaultService.loadCredentials();
       alert('All credentials have been deleted successfully.');
     } catch (error) {
       console.error('Failed to delete all credentials:', error);
