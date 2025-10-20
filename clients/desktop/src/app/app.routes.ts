@@ -7,6 +7,10 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'dashboard',
+    loadComponent: () => import('./features/dashboard/components/dashboard/dashboard.component').then(m => m.DashboardComponent)
+  },
+  {
     path: 'auth',
     children: [
       {

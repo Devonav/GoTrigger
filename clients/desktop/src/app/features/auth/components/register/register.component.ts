@@ -62,8 +62,7 @@ export class RegisterComponent {
         });
 
         this.isLoading.set(false);
-        // New users always go to setup
-        this.router.navigate(['/vault/setup']);
+        this.router.navigate(['/dashboard']);
       },
       error: (error) => {
         this.isLoading.set(false);

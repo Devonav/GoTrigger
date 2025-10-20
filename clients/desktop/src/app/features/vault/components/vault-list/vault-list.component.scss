@@ -2,12 +2,12 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: #f7fafc;
+  background: #000000;
 }
 
 .vault-header {
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
+  background: #0a0a0a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   padding: 20px 24px;
 }
 
@@ -31,9 +31,9 @@
 
 .user-email {
   font-size: 14px;
-  color: #718096;
+  color: rgba(255, 255, 255, 0.4);
   padding: 4px 12px;
-  background: #edf2f7;
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 6px;
 }
 
@@ -44,7 +44,7 @@
   font-size: 24px;
   font-weight: 700;
   margin: 0;
-  color: #1a202c;
+  color: #ffffff;
 
   svg {
     color: #667eea;
@@ -56,17 +56,18 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #fee;
-  color: #c53030;
-  border: none;
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: #dc2626;
-    color: white;
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
   }
 }
 
@@ -75,17 +76,18 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #fef3c7;
-  color: #92400e;
-  border: none;
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.2);
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: #f59e0b;
-    color: white;
+    background: rgba(251, 191, 36, 0.2);
+    border-color: rgba(251, 191, 36, 0.3);
+    color: #fbbf24;
   }
 }
 
@@ -94,17 +96,18 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #fed7d7;
-  color: #c53030;
-  border: none;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: #fc8181;
-    color: white;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
   }
 }
 
@@ -113,17 +116,18 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #e2e8f0;
-  color: #4a5568;
-  border: none;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: #cbd5e0;
-    color: #2d3748;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
   }
 }
 
@@ -136,20 +140,27 @@
 .search-icon {
   position: absolute;
   left: 16px;
-  color: #a0aec0;
+  color: rgba(255, 255, 255, 0.3);
 }
 
 .search-input {
   width: 100%;
   padding: 12px 48px 12px 48px;
-  border: 2px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   font-size: 15px;
-  transition: border-color 0.2s;
+  color: #ffffff;
+  transition: all 0.2s;
 
   &:focus {
     outline: none;
-    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.25);
   }
 }
 
@@ -158,14 +169,14 @@
   right: 16px;
   background: none;
   border: none;
-  color: #a0aec0;
+  color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
   padding: 4px;
   display: flex;
   align-items: center;
 
   &:hover {
-    color: #718096;
+    color: rgba(255, 255, 255, 0.6);
   }
 }
 
@@ -177,8 +188,8 @@
 }
 
 .credentials-sidebar {
-  background: white;
-  border-right: 1px solid #e2e8f0;
+  background: #0a0a0a;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
   overflow-y: auto;
 }
 
@@ -190,7 +201,7 @@
   justify-content: center;
   padding: 60px 24px;
   text-align: center;
-  color: #a0aec0;
+  color: rgba(255, 255, 255, 0.3);
 
   svg {
     margin-bottom: 20px;
@@ -199,7 +210,7 @@
 
   h3 {
     margin: 0 0 8px;
-    color: #4a5568;
+    color: rgba(255, 255, 255, 0.6);
     font-size: 18px;
   }
 
@@ -212,7 +223,7 @@
 .spinner-large {
   width: 48px;
   height: 48px;
-  border: 4px solid #e2e8f0;
+  border: 4px solid rgba(255, 255, 255, 0.1);
   border-top-color: #667eea;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -237,11 +248,11 @@
   transition: background 0.2s;
 
   &:hover {
-    background: #f7fafc;
+    background: rgba(255, 255, 255, 0.03);
   }
 
   &.selected {
-    background: #edf2f7;
+    background: rgba(255, 255, 255, 0.05);
   }
 }
 
@@ -266,7 +277,7 @@
 .credential-server {
   font-weight: 600;
   font-size: 15px;
-  color: #2d3748;
+  color: #ffffff;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -274,7 +285,7 @@
 
 .credential-account {
   font-size: 13px;
-  color: #718096;
+  color: rgba(255, 255, 255, 0.4);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -291,7 +302,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #a0aec0;
+  color: rgba(255, 255, 255, 0.3);
 
   svg {
     margin-bottom: 24px;
@@ -300,7 +311,7 @@
 
   h3 {
     margin: 0 0 8px;
-    color: #4a5568;
+    color: rgba(255, 255, 255, 0.6);
     font-size: 20px;
   }
 
@@ -315,7 +326,7 @@
   align-items: center;
   gap: 16px;
   padding-bottom: 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   margin-bottom: 24px;
 }
 
@@ -338,13 +349,13 @@
   h2 {
     margin: 0 0 4px;
     font-size: 24px;
-    color: #1a202c;
+    color: #ffffff;
   }
 
   p {
     margin: 0;
     font-size: 14px;
-    color: #718096;
+    color: rgba(255, 255, 255, 0.4);
   }
 }
 
@@ -356,9 +367,9 @@
 .btn-icon {
   width: 40px;
   height: 40px;
-  border: none;
-  background: #edf2f7;
-  color: #4a5568;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.6);
   border-radius: 8px;
   cursor: pointer;
   display: flex;
@@ -367,14 +378,16 @@
   transition: all 0.2s;
 
   &:hover {
-    background: #e2e8f0;
-    color: #2d3748;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
   }
 
   &.btn-delete {
     &:hover {
-      background: #fed7d7;
-      color: #c53030;
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
     }
   }
 }
@@ -391,7 +404,7 @@
     margin-bottom: 8px;
     font-weight: 600;
     font-size: 13px;
-    color: #718096;
+    color: rgba(255, 255, 255, 0.4);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -403,11 +416,11 @@
   justify-content: space-between;
   gap: 12px;
   padding: 12px 16px;
-  background: #f7fafc;
-  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   font-size: 15px;
-  color: #2d3748;
+  color: #ffffff;
 
   span {
     flex: 1;
@@ -425,7 +438,7 @@
 .btn-copy {
   background: none;
   border: none;
-  color: #718096;
+  color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -433,7 +446,7 @@
   transition: color 0.2s;
 
   &:hover {
-    color: #4a5568;
+    color: rgba(255, 255, 255, 0.6);
   }
 }
 
@@ -466,8 +479,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #667eea;
-  color: white;
+  background: #ffffff;
+  color: #000000;
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -475,7 +488,7 @@
   transition: all 0.2s;
 
   &:hover {
-    background: #5a67d8;
+    background: rgba(255, 255, 255, 0.9);
   }
 }
 
@@ -484,16 +497,18 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #48bb78;
-  color: white;
-  border: none;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: #38a169;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
   }
 }
 
@@ -511,7 +526,8 @@
 }
 
 .modal-content {
-  background: white;
+  background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
@@ -519,7 +535,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 .modal-header {
@@ -527,20 +543,20 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
   h2 {
     margin: 0;
     font-size: 20px;
     font-weight: 700;
-    color: #1a202c;
+    color: #ffffff;
   }
 }
 
 .btn-close {
   background: none;
   border: none;
-  color: #a0aec0;
+  color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -549,8 +565,8 @@
   transition: all 0.2s;
 
   &:hover {
-    background: #f7fafc;
-    color: #4a5568;
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.6);
   }
 }
 
@@ -562,8 +578,9 @@
 
 .error-message {
   padding: 12px 16px;
-  background: #fed7d7;
-  color: #c53030;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
   border-radius: 8px;
   margin-bottom: 16px;
   font-size: 14px;
@@ -576,7 +593,7 @@
     display: block;
     font-size: 14px;
     font-weight: 600;
-    color: #2d3748;
+    color: rgba(255, 255, 255, 0.6);
     margin-bottom: 8px;
   }
 
@@ -584,24 +601,28 @@
   textarea {
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
     font-size: 15px;
+    color: #ffffff;
     font-family: inherit;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
 
     &:focus {
       outline: none;
-      border-color: #667eea;
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.16);
     }
 
     &:disabled {
-      background: #f7fafc;
+      background: rgba(255, 255, 255, 0.02);
       cursor: not-allowed;
+      opacity: 0.4;
     }
 
     &::placeholder {
-      color: #a0aec0;
+      color: rgba(255, 255, 255, 0.25);
     }
   }
 
@@ -625,9 +646,9 @@
   align-items: center;
   gap: 6px;
   padding: 12px 16px;
-  background: #edf2f7;
-  color: #4a5568;
-  border: none;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
@@ -636,8 +657,9 @@
   transition: all 0.2s;
 
   &:hover:not(:disabled) {
-    background: #e2e8f0;
-    color: #2d3748;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
   }
 
   &:disabled {
@@ -651,7 +673,7 @@
   justify-content: flex-end;
   gap: 12px;
   padding: 20px 24px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .btn-primary,
@@ -674,29 +696,31 @@
 }
 
 .btn-primary {
-  background: #667eea;
-  color: white;
+  background: #ffffff;
+  color: #000000;
 
   &:hover:not(:disabled) {
-    background: #5a67d8;
+    background: rgba(255, 255, 255, 0.9);
   }
 }
 
 .btn-secondary {
-  background: #e2e8f0;
-  color: #4a5568;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 
   &:hover:not(:disabled) {
-    background: #cbd5e0;
-    color: #2d3748;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
   }
 }
 
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: #000000;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }

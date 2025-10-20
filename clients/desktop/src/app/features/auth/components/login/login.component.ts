@@ -46,20 +46,7 @@ export class LoginComponent {
         });
 
         this.isLoading.set(false);
-        
-        try {
-          await this.vaultStorage.initialize();
-          const vaultInitialized = await this.vaultStorage.getConfig('vault_initialized');
-          
-          if (vaultInitialized === 'true') {
-            this.router.navigate(['/vault/unlock']);
-          } else {
-            this.router.navigate(['/vault/setup']);
-          }
-        } catch (error) {
-          console.error('Failed to check vault status:', error);
-          this.router.navigate(['/vault/setup']);
-        }
+        this.router.navigate(['/dashboard']);
       },
       error: (error) => {
         this.isLoading.set(false);
