@@ -38,8 +38,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       if (mounted) {
-        // Navigate to vault setup screen
-        Navigator.of(context).pushReplacementNamed('/vault-setup');
+        // Navigate to dashboard after registration
+        Navigator.of(context).pushReplacementNamed('/dashboard');
       }
     } catch (e) {
       if (mounted) {

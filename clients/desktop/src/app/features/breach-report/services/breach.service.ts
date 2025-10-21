@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { getApiUrl } from '../../../../environments/environment';
 
 export interface LeakSource {
   source: string;
@@ -19,7 +20,7 @@ export interface LeakResponse {
   providedIn: 'root'
 })
 export class BreachService {
-  private readonly API_URL = 'http://localhost:8080/api/v1';
+  private readonly API_URL = getApiUrl();
 
   constructor(private http: HttpClient) {}
 

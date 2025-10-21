@@ -105,7 +105,11 @@ export class ApiService {
 
   private getServerUrl(): string {
     const stored = localStorage.getItem('serverUrl');
-    return stored || 'http://localhost:8080';
+    if (stored) return stored;
+
+    // Use environment configuration
+    const { environment } = require('../../environments/environment');
+    return environment.API_BASE_URL;
   }
 
   setServerUrl(url: string): void {
