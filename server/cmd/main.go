@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/deeplyprofound/password-sync/server/api"
+	"github.com/deeplyprofound/password-sync/server/api/breach"
 	"github.com/deeplyprofound/password-sync/server/domain/auth"
 	"github.com/deeplyprofound/password-sync/server/storage"
 	"github.com/joho/godotenv"
@@ -43,6 +44,17 @@ func main() {
 		log.Fatalf("Failed to connect to Postgres: %v", err)
 	}
 	defer pgStore.Close()
+
+	// Initialize Redis for breach report caching
+	redisAddr := os.Getenv("REDIS_ADDR")
+	if redisAddr == "" {
+		redisAddr = "localhost:6379"
+	}
+	if err := breach.InitRedis(redisAddr); err != nil {
+		fmt.Printf("WARNING: Redis not available - breach reports won't be cached: %v\n", err)
+	} else {
+		defer breach.CloseRedis()
+	}
 
 	// Create server with Postgres store
 	server := api.NewServerWithAuth(pgStore)

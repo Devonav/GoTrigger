@@ -74,12 +74,27 @@ func CheckEmail(c *gin.Context) {
 		return
 	}
 
-	// Call HIBP API
+	// Try to get from Redis cache first
+	cachedData, err := GetCachedBreachReport(req.Email)
+	if err != nil {
+		fmt.Printf("Redis cache error (non-fatal): %v\n", err)
+	} else if cachedData != nil {
+		// Cache hit - return cached data
+		c.JSON(http.StatusOK, cachedData)
+		return
+	}
+
+	// Cache miss - call HIBP API
 	leakData, err := callHIBPAPI(req.Email)
 	if err != nil {
 		fmt.Printf("HIBP API error: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to check email: %v", err)})
 		return
+	}
+
+	// Cache the result for 24 hours
+	if err := CacheBreachReport(req.Email, leakData, 24*time.Hour); err != nil {
+		fmt.Printf("Failed to cache breach report (non-fatal): %v\n", err)
 	}
 
 	c.JSON(http.StatusOK, leakData)
