@@ -60,8 +60,8 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (mounted) {
-        // Skip vault unlock screen and go directly to vault list
-        Navigator.of(context).pushReplacementNamed('/vault-list');
+        // Navigate to dashboard after biometric login
+        Navigator.of(context).pushReplacementNamed('/dashboard');
       }
     } catch (e) {
       if (mounted) {
@@ -98,8 +98,8 @@ class _LoginScreenState extends State<LoginScreen> {
         // Offer to enable biometric login
         await _offerBiometricSetup(username, password);
 
-        // Navigate to vault unlock screen
-        Navigator.of(context).pushReplacementNamed('/vault');
+        // Navigate to dashboard
+        Navigator.of(context).pushReplacementNamed('/dashboard');
       }
     } catch (e) {
       if (mounted) {

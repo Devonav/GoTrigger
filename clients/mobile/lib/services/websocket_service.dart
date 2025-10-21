@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import '../config/environment.dart';
 
 /// SyncEvent model matching the server
 class SyncEvent {
@@ -33,7 +34,7 @@ class SyncEvent {
 
 /// WebSocket Service - Handles real-time sync notifications
 class WebSocketService {
-  static const String _baseWsUrl = 'ws://192.168.86.22:8080/api/v1';
+  static final String _baseWsUrl = Environment.wsUrl;
   static final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   WebSocketChannel? _channel;

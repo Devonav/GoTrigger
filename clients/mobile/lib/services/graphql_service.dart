@@ -1,13 +1,13 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../config/environment.dart';
 
 /// GraphQL Service - Handles GraphQL client configuration and authentication
 /// Connects to the Go server API for syncing credentials
 class GraphQLService {
-  // Use localhost for local development
-  // For iOS simulator, localhost works fine
-  // For physical device, use your computer's IP address
-  static const String _defaultEndpoint = 'http://192.168.86.22:8080/graphql';
+  // Use environment configuration
+  // To change the URL, edit lib/config/environment.dart
+  static final String _defaultEndpoint = Environment.graphqlUrl;
   static final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   static GraphQLClient? _client;

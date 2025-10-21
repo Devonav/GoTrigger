@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { getWsUrl } from '../../../environments/environment';
 
 export interface SyncEvent {
   type: string;
@@ -19,7 +20,7 @@ export class WebSocketService {
   private reconnectTimeout: any = null;
   private isConnected = false;
   private currentZone: string | null = null;
-  private readonly WS_URL = 'ws://localhost:8080/api/v1/sync/live';
+  private readonly WS_URL = getWsUrl();
   private readonly RECONNECT_DELAY = 5000;
 
   constructor(private authService: AuthService) {}

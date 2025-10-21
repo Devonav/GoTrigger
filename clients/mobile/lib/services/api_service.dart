@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../config/environment.dart';
 
 /// API Service - Handles REST API calls to the Go server
 /// Used for authentication and non-GraphQL operations
 class ApiService {
-  // Use localhost for local development
-  // For iOS simulator, localhost works fine
-  // For physical device, use your computer's IP address
-  static const String _baseUrl = 'http://192.168.86.22:8080/api/v1';
+  // Use environment configuration
+  // To change the URL, edit lib/config/environment.dart
+  static final String _baseUrl = Environment.apiUrl;
   static final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   /// Register new user

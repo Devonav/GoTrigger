@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
+import 'features/dashboard/dashboard_screen.dart';
 import 'features/vault/vault_unlock_screen.dart';
 import 'features/vault/vault_list_screen.dart';
 
@@ -17,25 +18,52 @@ class PasswordSyncApp extends StatelessWidget {
       title: 'Password Sync',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.light,
+        colorScheme: ColorScheme.dark(
+          brightness: Brightness.dark,
+          primary: const Color(0xFFFFFFFF),        // White buttons
+          secondary: const Color(0xFF4FACFE),      // Light Blue
+          surface: const Color(0xFF0F0F0F),        // Very dark gray (mobile-friendly)
+          onSurface: const Color(0xFFFFFFFF),      // White text
+          surfaceContainerHighest: const Color(0xFF1A1A1A), // Card background
+          onSurfaceVariant: const Color.fromRGBO(255, 255, 255, 0.4), // Muted text
+        ),
+        scaffoldBackgroundColor: const Color(0xFF0F0F0F),
+        cardColor: const Color(0xFF1A1A1A),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+          ),
         ),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
+        colorScheme: ColorScheme.dark(
           brightness: Brightness.dark,
+          primary: const Color(0xFFFFFFFF),
+          secondary: const Color(0xFF4FACFE),
+          surface: const Color(0xFF0F0F0F),
+          onSurface: const Color(0xFFFFFFFF),
+          surfaceContainerHighest: const Color(0xFF1A1A1A),
+          onSurfaceVariant: const Color.fromRGBO(255, 255, 255, 0.4),
+        ),
+        scaffoldBackgroundColor: const Color(0xFF0F0F0F),
+        cardColor: const Color(0xFF1A1A1A),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+          ),
         ),
         useMaterial3: true,
       ),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
+        '/dashboard': (context) => const DashboardScreen(),
         '/vault': (context) => const VaultUnlockScreen(),
         '/vault-list': (context) => const VaultListScreen(),
       },
@@ -49,10 +77,15 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0F0F0F),
       appBar: AppBar(
-        title: const Text('Password Sync'),
+        title: const Text(
+          'Password Sync',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: const Color(0xFF1A1A1A),
+        elevation: 0,
       ),
       body: Center(
         child: Padding(
@@ -127,6 +160,10 @@ class HomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushNamed(context, '/register');
                   },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: Colors.white, width: 1.5),
+                  ),
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16.0),
                     child: Text('Create Account'),
@@ -159,12 +196,16 @@ class _FeatureItem extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.15),
+              width: 1,
+            ),
           ),
           child: Icon(
             icon,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            color: Colors.white,
             size: 24,
           ),
         ),
@@ -175,16 +216,19 @@ class _FeatureItem extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.white.withOpacity(0.5),
+                ),
               ),
             ],
           ),
