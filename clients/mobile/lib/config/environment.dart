@@ -10,11 +10,11 @@ class Environment {
   // API Configuration
   // Change this to your computer's IP address when testing on physical devices
   // For iOS simulator: 'http://localhost:8080' works fine
-  // For physical device: Use your Mac's IP like 'http://192.168.86.22:8080'
-  static const String apiBaseUrl = 'http://192.168.86.22:8080';
+  // For physical device: Use your Mac's IP like 'http://192.168.1.183:8080'
+  static const String apiBaseUrl = 'http://192.168.1.183:8080';
 
   // WebSocket Configuration
-  static const String wsBaseUrl = 'ws://192.168.86.22:8080';
+  static const String wsBaseUrl = 'ws://192.168.1.183:8080';
 
   // API Version
   static const String apiVersion = 'v1';
