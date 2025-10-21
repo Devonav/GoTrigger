@@ -11,6 +11,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/dashboard/components/dashboard/dashboard.component').then(m => m.DashboardComponent)
   },
   {
+    path: 'breach-report',
+    loadComponent: () => import('./features/breach-report/components/breach-report/breach-report.component').then(m => m.BreachReportComponent)
+  },
+  {
     path: 'auth',
     children: [
       {

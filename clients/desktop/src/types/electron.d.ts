@@ -30,6 +30,7 @@ interface DatabaseAPI {
 
 interface BiometricAPI {
   isAvailable: () => Promise<{ available: boolean; type: string }>;
+  hasPassword: (userId: string) => Promise<{ exists: boolean }>;
   saveMasterPassword: (password: string, userId: string) => Promise<{ success: boolean; error?: string }>;
   getMasterPassword: (userId: string) => Promise<{ success: boolean; password?: string; error?: string }>;
   deleteMasterPassword: (userId: string) => Promise<{ success: boolean; error?: string }>;

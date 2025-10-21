@@ -9,9 +9,13 @@ import (
 	"github.com/deeplyprofound/password-sync/server/api"
 	"github.com/deeplyprofound/password-sync/server/domain/auth"
 	"github.com/deeplyprofound/password-sync/server/storage"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// Load .env file if it exists
+	_ = godotenv.Load("server/.env")
+	_ = godotenv.Load(".env")
 	// Flags
 	pgConn := flag.String("postgres", "", "Postgres connection string (REQUIRED: e.g. postgres://user:pass@localhost/password_sync)")
 	port := flag.String("port", "8080", "Server port")

@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/deeplyprofound/password-sync/server/api/breach"
+	"github.com/deeplyprofound/password-sync/server/api/cve"
 	"github.com/deeplyprofound/password-sync/server/api/handlers"
 	"github.com/deeplyprofound/password-sync/server/api/middleware"
 	"github.com/deeplyprofound/password-sync/server/api/websocket"
@@ -89,6 +91,13 @@ func (s *Server) setupRoutes() {
 		// Device management
 		protected.GET("/devices", s.deviceHandler.ListDevices)
 		protected.POST("/devices", s.deviceHandler.RegisterDevice)
+
+		// Breach Report (LeakOSINT)
+		protected.POST("/breach/check", breach.CheckEmail)
+
+		// CVE Security Alerts (NIST)
+		protected.POST("/cve/search", cve.SearchCVEs)
+		protected.GET("/cve/latest", cve.GetLatestCVEs)
 	}
 }
 
