@@ -15,6 +15,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/breach-report/components/breach-report/breach-report.component').then(m => m.BreachReportComponent)
   },
   {
+    path: 'cve-alerts',
+    loadComponent: () => import('./features/cve-alerts/components/cve-alerts/cve-alerts.component').then(m => m.CveAlertsComponent)
+  },
+  {
     path: 'auth',
     children: [
       {
