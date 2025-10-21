@@ -58,6 +58,44 @@
         <h3>Breach Report</h3>
         <p>Check for compromised credentials</p>
       </div>
+
+      <!-- CVE Security Alerts Tile -->
+      <div class="dashboard-tile cve-tile" (click)="navigateToCVEAlerts()">
+        <div class="tile-icon">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <path d="M12 8v4"></path>
+            <path d="M12 16h.01"></path>
+          </svg>
+        </div>
+        <h3>CVE Security Alerts</h3>
+        <p>Monitor vulnerability alerts</p>
+      </div>
+
+      <!-- Password Rotation Tile -->
+      <div class="dashboard-tile rotation-tile" (click)="navigateToPasswordRotation()">
+        <div class="tile-icon">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        <h3>Password Rotation</h3>
+        <p>Automate password updates</p>
+      </div>
+
+      <!-- Settings Tile -->
+      <div class="dashboard-tile settings-tile" (click)="navigateToSettings()">
+        <div class="tile-icon">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 1v6m0 6v6m5.66-15.66l-4.24 4.24m0 6.36l4.24 4.24M23 12h-6m-6 0H5m15.66 5.66l-4.24-4.24m0-6.36l4.24-4.24"></path>
+          </svg>
+        </div>
+        <h3>Settings</h3>
+        <p>Configure your preferences</p>
+      </div>
     </div>
   </div>
 </div>

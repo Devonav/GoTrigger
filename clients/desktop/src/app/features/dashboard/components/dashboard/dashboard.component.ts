@@ -39,6 +39,21 @@ export class DashboardComponent {
     alert('Breach Report - Coming Soon');
   }
 
+  navigateToCVEAlerts(): void {
+    // Coming soon
+    alert('CVE Security Alerts - Coming Soon');
+  }
+
+  navigateToPasswordRotation(): void {
+    // Coming soon
+    alert('Password Rotation - Coming Soon');
+  }
+
+  navigateToSettings(): void {
+    // Coming soon
+    alert('Settings - Coming Soon');
+  }
+
   async logout(): Promise<void> {
     this.authService.logout();
     this.sessionStorage.clearSession();
