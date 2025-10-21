@@ -208,6 +208,10 @@ export class VaultListComponent implements OnInit, OnDestroy {
     return date.toLocaleDateString();
   }
 
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
+  }
+
   async lockVault(): Promise<void> {
     await this.vaultService.lock();
     this.router.navigate(['/vault/unlock']);
