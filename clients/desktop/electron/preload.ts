@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 export interface BiometricAPI {
   isAvailable: () => Promise<{ available: boolean; type: string }>;
+  hasPassword: (userId: string) => Promise<{ exists: boolean }>;
   saveMasterPassword: (password: string, userId: string) => Promise<{ success: boolean; error?: string }>;
   getMasterPassword: (userId: string) => Promise<{ success: boolean; password?: string; error?: string }>;
   deleteMasterPassword: (userId: string) => Promise<{ success: boolean; error?: string }>;
@@ -48,19 +49,22 @@ contextBridge.exposeInMainWorld('electron', {
   getAppVersion: (): Promise<string> => ipcRenderer.invoke('get-app-version'),
   
   biometric: {
-    isAvailable: (): Promise<{ available: boolean; type: string }> => 
+    isAvailable: (): Promise<{ available: boolean; type: string }> =>
       ipcRenderer.invoke('biometric:isAvailable'),
-    
-    saveMasterPassword: (password: string, userId: string): Promise<{ success: boolean; error?: string }> => 
+
+    hasPassword: (userId: string): Promise<{ exists: boolean }> =>
+      ipcRenderer.invoke('biometric:hasPassword', userId),
+
+    saveMasterPassword: (password: string, userId: string): Promise<{ success: boolean; error?: string }> =>
       ipcRenderer.invoke('biometric:saveMasterPassword', password, userId),
-    
-    getMasterPassword: (userId: string): Promise<{ success: boolean; password?: string; error?: string }> => 
+
+    getMasterPassword: (userId: string): Promise<{ success: boolean; password?: string; error?: string }> =>
       ipcRenderer.invoke('biometric:getMasterPassword', userId),
-    
-    deleteMasterPassword: (userId: string): Promise<{ success: boolean; error?: string }> => 
+
+    deleteMasterPassword: (userId: string): Promise<{ success: boolean; error?: string }> =>
       ipcRenderer.invoke('biometric:deleteMasterPassword', userId),
-    
-    clearAll: (): Promise<{ success: boolean; error?: string }> => 
+
+    clearAll: (): Promise<{ success: boolean; error?: string }> =>
       ipcRenderer.invoke('biometric:clearAll'),
   },
 

@@ -96,9 +96,9 @@ export class SetupVaultComponent implements OnInit {
       
       // Clear temp mnemonic from memory
       this.tempMnemonic = '';
-      
-      // Navigate to vault
-      this.router.navigate(['/vault/list']);
+
+      // Navigate to dashboard
+      this.router.navigate(['/dashboard']);
     } catch (error) {
       this.errorMessage.set('Failed to initialize vault: ' + (error as Error).message);
       console.error('Vault initialization error:', error);

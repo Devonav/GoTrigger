@@ -20,6 +20,16 @@ export class BiometricService {
     }
   }
 
+  async hasPassword(userId: string): Promise<boolean> {
+    try {
+      const result = await this.biometric.hasPassword(userId);
+      return result.exists;
+    } catch (error) {
+      console.error('Check password error:', error);
+      return false;
+    }
+  }
+
   async saveMasterPassword(password: string, userId: string): Promise<boolean> {
     try {
       const result = await this.biometric.saveMasterPassword(password, userId);

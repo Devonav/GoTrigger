@@ -62,7 +62,7 @@ export class RegisterComponent {
         });
 
         this.isLoading.set(false);
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/vault/setup']);
       },
       error: (error) => {
         this.isLoading.set(false);

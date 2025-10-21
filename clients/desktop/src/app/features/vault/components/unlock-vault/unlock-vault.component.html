@@ -21,6 +21,31 @@
       </div>
     }
 
+    @if (biometricAvailable()) {
+      <button
+        type="button"
+        (click)="unlockWithBiometric()"
+        class="btn btn-biometric btn-large"
+        [disabled]="isUnlocking()"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6z"></path>
+          <path d="M11 16a1 1 0 1 0 2 0 1 1 0 0 0-2 0z"></path>
+          <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+        </svg>
+        @if (isUnlocking()) {
+          <span class="spinner"></span>
+          Authenticating...
+        } @else {
+          Unlock with {{ biometricType() }}
+        }
+      </button>
+
+      <div class="divider">
+        <span>or use master password</span>
+      </div>
+    }
+
     <form (ngSubmit)="unlockWithPassword()" class="unlock-form">
       <div class="password-input-wrapper">
         <input
@@ -28,7 +53,7 @@
           name="password"
           [type]="showPassword() ? 'text' : 'password'"
           [(ngModel)]="masterPassword"
-          placeholder="Enter recovery phrase"
+          placeholder="Enter master password"
           autocomplete="off"
           [disabled]="isUnlocking()"
           class="password-input"
@@ -53,18 +78,6 @@
         </button>
       </div>
 
-      @if (biometricAvailable()) {
-        <label class="checkbox-label">
-          <input
-            type="checkbox"
-            [checked]="rememberPassword()"
-            (change)="toggleRememberPassword()"
-            [disabled]="isUnlocking()"
-          />
-          <span>Save to {{ biometricType() }}</span>
-        </label>
-      }
-
       <button
         type="submit"
         class="btn btn-primary"
@@ -74,27 +87,9 @@
           <span class="spinner"></span>
           Unlocking...
         } @else {
-          Unlock
+          Unlock with Password
         }
       </button>
     </form>
-
-    @if (biometricAvailable() && rememberPassword()) {
-      <div class="divider">
-        <span>or</span>
-      </div>
-
-      <button
-        type="button"
-        (click)="unlockWithBiometric()"
-        class="btn btn-biometric"
-        [disabled]="isUnlocking()"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2a5 5 0 0 1 5 5v3H7V7a5 5 0 0 1 5-5zm6 8h-1V7a5 5 0 0 0-10 0v3H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V12a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"></path>
-        </svg>
-        Unlock with {{ biometricType() }}
-      </button>
-    }
   </div>
 </div>

@@ -35,8 +35,7 @@ export class DashboardComponent {
   }
 
   navigateToBreachReport(): void {
-    // Coming soon
-    alert('Breach Report - Coming Soon');
+    this.router.navigate(['/breach-report']);
   }
 
   navigateToCVEAlerts(): void {

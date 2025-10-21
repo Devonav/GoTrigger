@@ -22,8 +22,6 @@ export class UnlockVaultComponent implements OnInit {
   biometricAvailable = signal(false);
   biometricType = signal('');
   showPassword = signal(false);
-  rememberPassword = signal(false);
-  isFirstTimeSetup = signal(false);
 
   private readonly USER_ID = 'default-user';
 
@@ -39,21 +37,30 @@ export class UnlockVaultComponent implements OnInit {
   async ngOnInit() {
     try {
       await this.storage.initialize();
-      
+
       // Check if vault is initialized - if not, redirect to setup
       const vaultInitialized = await this.storage.getConfig('vault_initialized');
       if (!vaultInitialized) {
         this.router.navigate(['/vault/setup']);
         return;
       }
-      
+
       const { available, type } = await this.biometric.isAvailable();
+      console.log('🔍 Biometric check:', { available, type });
       this.biometricAvailable.set(available);
       this.biometricType.set(type);
 
-      const hasSavedPassword = await this.biometric.getMasterPassword(this.USER_ID);
+      // Check if password exists WITHOUT triggering biometric prompt
+      const hasSavedPassword = await this.biometric.hasPassword(this.USER_ID);
+      console.log('🔑 Checking for saved password:', hasSavedPassword ? 'Found' : 'Not found');
+
+      // Auto-prompt for biometric unlock if password is saved and biometrics available
       if (hasSavedPassword && available) {
-        this.rememberPassword.set(true);
+        console.log('🚀 Auto-prompting Touch ID for returning user...');
+        // Small delay to let UI render first
+        setTimeout(() => {
+          this.unlockWithBiometric();
+        }, 500);
       }
     } catch (error) {
       console.error('Initialization error:', error);
@@ -90,8 +97,15 @@ export class UnlockVaultComponent implements OnInit {
         }
       }
 
-      if (this.rememberPassword() && this.biometricAvailable()) {
-        await this.biometric.saveMasterPassword(this.masterPassword, this.USER_ID);
+      // Auto-save password for biometric unlock if available
+      if (this.biometricAvailable()) {
+        console.log('💾 Auto-saving password to keychain for userId:', this.USER_ID);
+        const saved = await this.biometric.saveMasterPassword(this.masterPassword, this.USER_ID);
+        if (saved) {
+          console.log('✅ Password saved to keychain successfully');
+        } else {
+          console.error('❌ Failed to save password to keychain');
+        }
       }
 
       this.onVaultUnlocked();
@@ -106,6 +120,8 @@ export class UnlockVaultComponent implements OnInit {
   }
 
   async unlockWithBiometric() {
+    console.log('🔐 Attempting biometric unlock for userId:', this.USER_ID);
+
     if (!this.biometricAvailable()) {
       this.errorMessage.set('Biometric authentication not available');
       return;
@@ -115,20 +131,23 @@ export class UnlockVaultComponent implements OnInit {
     this.errorMessage.set('');
 
     try {
+      console.log('📱 Requesting password from keychain...');
       const password = await this.biometric.getMasterPassword(this.USER_ID);
-      
+
       if (!password) {
+        console.error('❌ No saved password found in keychain');
         this.errorMessage.set('No saved password found. Please unlock with master password first.');
         this.isUnlocking.set(false);
         return;
       }
 
+      console.log('✅ Password retrieved from keychain');
       const salt = await this.getSalt();
       await this.crypto.deriveMasterKey(password, salt);
 
       this.onVaultUnlocked();
     } catch (error) {
-      console.error('Biometric unlock failed:', error);
+      console.error('❌ Biometric unlock failed:', error);
       this.errorMessage.set('Biometric authentication failed');
       this.crypto.clearMasterKey();
     } finally {
@@ -138,14 +157,6 @@ export class UnlockVaultComponent implements OnInit {
 
   togglePasswordVisibility() {
     this.showPassword.update(v => !v);
-  }
-
-  toggleRememberPassword() {
-    this.rememberPassword.update(v => !v);
-    
-    if (!this.rememberPassword()) {
-      this.biometric.deleteMasterPassword(this.USER_ID);
-    }
   }
 
   private async getSalt(): Promise<Uint8Array | undefined> {

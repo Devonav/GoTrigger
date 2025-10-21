@@ -1,0 +1,132 @@
+<div class="breach-container">
+  <div class="breach-card">
+    <div class="breach-header">
+      <div class="header-content">
+        <h1>Breach Report</h1>
+        <p>Check if your email has been compromised in data breaches</p>
+      </div>
+      <button class="btn-dashboard" (click)="goToDashboard()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        Dashboard
+      </button>
+    </div>
+
+    <div class="breach-body">
+      <!-- Search Form -->
+      <div class="search-section">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="email-input-group">
+            <input
+              id="email"
+              type="email"
+              [(ngModel)]="email"
+              placeholder="your@email.com"
+              [disabled]="isLoading()"
+              (keyup.enter)="checkEmail()"
+              autocomplete="email"
+            />
+            <button
+              class="btn-check"
+              (click)="checkEmail()"
+              [disabled]="isLoading() || !email.trim()">
+              @if (isLoading()) {
+                <div class="spinner"></div>
+                Checking...
+              } @else {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                Check Email
+              }
+            </button>
+          </div>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="error-message">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10" stroke-width="2"/>
+              <line x1="12" y1="8" x2="12" y2="12" stroke-width="2"/>
+              <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2"/>
+            </svg>
+            {{ errorMessage() }}
+          </div>
+        }
+      </div>
+
+      <!-- Results -->
+      @if (hasChecked() && leakResult()) {
+        <div class="results-section">
+          @if (leakResult()!.total_leaks === 0) {
+            <!-- No Breaches Found -->
+            <div class="no-breaches">
+              <div class="no-breaches-icon">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+              </div>
+              <h2>Good News!</h2>
+              <p>No breaches found for <strong>{{ leakResult()!.email }}</strong></p>
+              <p class="sub-text">This email address does not appear in any known data breaches.</p>
+              <button class="btn-check-another" (click)="reset()">Check Another Email</button>
+            </div>
+          } @else {
+            <!-- Breaches Found -->
+            <div class="breaches-found">
+              <div class="breach-alert">
+                <div class="alert-icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </div>
+                <h2>{{ leakResult()!.total_leaks }} Breach{{ leakResult()!.total_leaks > 1 ? 'es' : '' }} Found</h2>
+                <p>Your email <strong>{{ leakResult()!.email }}</strong> was found in the following data breaches:</p>
+              </div>
+
+              <div class="breach-list">
+                @for (leak of leakResult()!.leaked_data; track leak.source) {
+                  <div class="breach-item">
+                    <div class="breach-item-header">
+                      <h3>{{ leak.source }}</h3>
+                      <span class="breach-date">{{ leak.date }}</span>
+                    </div>
+                    <div class="breach-item-body">
+                      <div class="data-types">
+                        <span class="label">Compromised Data:</span>
+                        <div class="types-list">
+                          @for (type of leak.data_types; track type) {
+                            <span class="type-badge">{{ type }}</span>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <div class="recommendations">
+                <h3>🔒 Recommended Actions</h3>
+                <ul>
+                  <li>Change your passwords for affected accounts immediately</li>
+                  <li>Enable two-factor authentication where available</li>
+                  <li>Monitor your accounts for suspicious activity</li>
+                  <li>Use unique passwords for each service</li>
+                </ul>
+              </div>
+
+              <button class="btn-check-another" (click)="reset()">Check Another Email</button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>
