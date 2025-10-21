@@ -39,8 +39,7 @@ export class DashboardComponent {
   }
 
   navigateToCVEAlerts(): void {
-    // Coming soon
-    alert('CVE Security Alerts - Coming Soon');
+    this.router.navigate(['/cve-alerts']);
   }
 
   navigateToPasswordRotation(): void {

@@ -63,6 +63,10 @@ export class BreachReportComponent {
     this.errorMessage.set('');
   }
 
+  formatNumber(num: number): string {
+    return num.toLocaleString();
+  }
+
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);

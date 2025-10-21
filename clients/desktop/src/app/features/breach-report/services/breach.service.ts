@@ -7,6 +7,9 @@ export interface LeakSource {
   source: string;
   date: string;
   data_types: string[];
+  description?: string;
+  pwn_count?: number;
+  is_verified?: boolean;
 }
 
 export interface LeakResponse {
