@@ -1,6 +1,31 @@
 # Password Sync - iOS Mobile Client
 
-Cross-platform password manager iOS client built with Flutter. Features end-to-end encryption, biometric unlock, and sync with the Go server.
+Cross-platform password manager iOS client built with Flutter. Features end-to-end encryption, biometric unlock, real-time sync, and a premium dark UI matching the desktop client.
+
+## Quick Start
+
+```bash
+# 1. Install dependencies
+flutter pub get
+
+# 2. Configure server URL (IMPORTANT!)
+# Edit lib/config/environment.dart and set your server IP
+
+# For iOS Simulator (localhost works):
+# apiBaseUrl = 'http://localhost:8080'
+
+# For Physical Device (use your Mac's IP):
+# Find IP: ipconfig getifaddr en0
+# apiBaseUrl = 'http://192.168.86.22:8080'  # Replace with your IP
+
+# 3. Run the app
+flutter run
+
+# OR for clean build:
+flutter clean && flutter pub get && flutter run
+```
+
+**See [Installation](#installation) section below for detailed setup instructions.**
 
 ## Features
 
@@ -14,6 +39,8 @@ Cross-platform password manager iOS client built with Flutter. Features end-to-e
 - ✅ **Direct vault access with biometric login** (skips master password screen)
 - ✅ Secure credential storage (iOS Keychain)
 - ✅ Authentication screens (login/register/home)
+- ✅ **Dashboard screen** with 6 service tiles (matching desktop)
+- ✅ **Premium dark theme** (mobile-friendly with proper contrast)
 - ✅ **Vault list screen** with credential display
 - ✅ **Pull-to-refresh** sync functionality
 - ✅ **Search credentials** by name, username, or URL
@@ -21,6 +48,7 @@ Cross-platform password manager iOS client built with Flutter. Features end-to-e
 - ✅ Sync with tombstone filtering
 - ✅ **Real-time sync via WebSocket** (auto-refresh when credentials change)
 - ✅ **Cross-platform sync** with desktop client
+- ✅ **Environment configuration** for easy server URL switching
 
 ### In Progress
 - 🚧 Add/Edit credential functionality
@@ -80,6 +108,8 @@ uuid: ^4.3.3
 
 ```
 lib/
+├── config/
+│   └── environment.dart        # 🆕 Server URL configuration
 ├── core/
 │   ├── auth/           # Authentication logic
 │   ├── crypto/         # Encryption services (ChaCha20-Poly1305)
@@ -87,10 +117,13 @@ lib/
 │   └── sync/           # Server sync logic
 ├── features/
 │   ├── auth/           # Login/Register screens
+│   ├── dashboard/      # 🆕 Dashboard screen (6 service tiles)
 │   └── vault/          # Credential management screens
 ├── services/
-│   ├── api_service.dart       # REST API calls
-│   └── graphql_service.dart   # GraphQL client
+│   ├── api_service.dart        # REST API calls
+│   ├── websocket_service.dart  # WebSocket real-time sync
+│   ├── graphql_service.dart    # GraphQL client
+│   └── biometric_service.dart  # Face ID/Touch ID
 └── shared/
     ├── models/         # Data models (Credential, etc.)
     └── widgets/        # Reusable UI components
@@ -158,27 +191,43 @@ lib/
 
 2. **Configure server endpoint:**
 
-   **For iOS Simulator:**
-   - Leave endpoints as `http://localhost:8080` (default)
+   All server URLs are now centralized in **`lib/config/environment.dart`** for easy configuration.
 
-   **For Physical iOS Device:**
-   - Find your Mac's IP address: `ipconfig getifaddr en0`
-   - Update endpoints in these files to use your Mac's IP:
-     - `lib/services/api_service.dart`: Change `localhost` to `192.168.x.x`
-     - `lib/services/websocket_service.dart`: Change `ws://localhost` to `ws://192.168.x.x`
-     - `lib/services/graphql_service.dart`: Change `localhost` to `192.168.x.x`
-
-   Example:
+   **For iOS Simulator (using localhost):**
    ```dart
-   // api_service.dart
-   static const String _baseUrl = 'http://192.168.86.22:8080/api/v1';
-
-   // websocket_service.dart
-   static const String _baseWsUrl = 'ws://192.168.86.22:8080/api/v1';
-
-   // graphql_service.dart
-   static const String _defaultEndpoint = 'http://192.168.86.22:8080/graphql';
+   // lib/config/environment.dart
+   class Environment {
+     static const String apiBaseUrl = 'http://localhost:8080';
+     static const String wsBaseUrl = 'ws://localhost:8080';
+     // ... rest stays the same
+   }
    ```
+
+   **For Physical iOS Device (using network IP):**
+
+   First, find your Mac's IP address:
+   ```bash
+   # macOS
+   ipconfig getifaddr en0
+   # Example output: 192.168.86.22
+   ```
+
+   Then update the environment file:
+   ```dart
+   // lib/config/environment.dart
+   class Environment {
+     static const String apiBaseUrl = 'http://192.168.86.22:8080';  // Your Mac's IP
+     static const String wsBaseUrl = 'ws://192.168.86.22:8080';     // Your Mac's IP
+     static const String apiVersion = 'v1';
+
+     // Computed URLs (no changes needed)
+     static String get apiUrl => '$apiBaseUrl/api/$apiVersion';
+     static String get wsUrl => '$wsBaseUrl/api/$apiVersion';
+     static String get graphqlUrl => '$apiBaseUrl/graphql';
+   }
+   ```
+
+   **That's it!** All services (`api_service.dart`, `websocket_service.dart`, `graphql_service.dart`) automatically use this configuration.
 
 3. **Configure iOS deployment target:**
    ```bash
@@ -350,6 +399,48 @@ wsService.syncEvents.listen((event) {
 
 This provides a seamless multi-device experience where changes on one device instantly appear on all others.
 
+## UI & Design
+
+### Dashboard
+
+The mobile app now features a dashboard screen matching the desktop client:
+
+**Navigation Flow**: Login/Register → **Dashboard** → Vault/Services
+
+**6 Service Tiles**:
+1. **Password Vault** (Indigo `#667EEA`) - Functional
+2. **Mail Sync** (Sky Blue `#4FACFE`) - Coming Soon
+3. **Breach Report** (Amber `#FBBF24`) - Coming Soon
+4. **CVE Alerts** (Red `#EF4444`) - Coming Soon
+5. **Password Rotation** (Green `#22C55E`) - Coming Soon
+6. **Settings** (Purple `#A855F7`) - Coming Soon
+
+### Premium Dark Theme
+
+The mobile app features a **mobile-friendly dark theme** with:
+
+**Colors**:
+- Background: `#0F0F0F` (dark gray, not pure black for better OLED compatibility)
+- Cards/Surfaces: `#1A1A1A` (lighter dark gray for contrast)
+- Text: White with opacity variations (`1.0`, `0.5`, `0.4`)
+- Buttons: White filled buttons with black text
+
+**Design Elements**:
+- **Strong outlines**: `1.5px` white borders at `10-12%` opacity for better visibility
+- **Subtle shadows**: Depth without overwhelming dark backgrounds
+- **Colorful icons**: Matching desktop tile colors exactly
+- **Touch-friendly**: Larger tap targets and spacing for mobile
+
+**Accessibility**:
+- High contrast ratios for text readability
+- Clear visual hierarchy
+- Mobile-friendly borders for better element separation
+- Proper dark mode implementation for OLED screens
+
+### Screenshots
+
+See `DASHBOARD_IMPLEMENTATION.md` for detailed UI specifications and comparison with desktop.
+
 ## Troubleshooting
 
 ### Common Issues
@@ -404,6 +495,15 @@ This is the iOS mobile client. See the main project README for overall architect
 
 ---
 
+## Configuration Reference
+
+For complete network configuration details (localhost vs IP, desktop sync, etc.), see:
+- **[NETWORK_CONFIGURATION.md](../../NETWORK_CONFIGURATION.md)** - Full guide for configuring server URLs
+- **[DASHBOARD_IMPLEMENTATION.md](DASHBOARD_IMPLEMENTATION.md)** - Dashboard UI specifications
+
+---
+
 **Last Updated**: October 2025
-**Status**: ✅ Fully Functional - Sync, Biometrics, Real-time Updates
+**Status**: ✅ Fully Functional - Dashboard, Sync, Biometrics, Real-time Updates, Premium Dark UI
 **Platform**: iOS 13.0+ (tested on iOS 26 beta)
+**New**: Centralized environment configuration, Dashboard screen, Mobile-friendly dark theme
