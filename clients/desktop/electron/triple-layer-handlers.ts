@@ -23,16 +23,16 @@ export function setupTripleLayerHandlers(): void {
     try {
       const db = getDatabase();
       const stmt = db.prepare(`
-        INSERT INTO keys (
+        INSERT OR REPLACE INTO keys (
           UUID, kcls, type, labl, data, agrp,
           encr, decr, wrap, unwp, sign, vrfy, drve,
           cdat, mdat, tomb
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
-      
+
       const now = getCurrentTimestamp();
       const uuid = key.uuid || randomUUID();
-      
+
       stmt.run(
         uuid,
         key.keyClass,
@@ -49,9 +49,9 @@ export function setupTripleLayerHandlers(): void {
         key.usageFlags.derive ? 1 : 0,
         now,
         now,
-        0
+        key.tombstone ? 1 : 0
       );
-      
+
       return { success: true, uuid };
     } catch (error) {
       return { success: false, error: String(error) };
@@ -101,16 +101,16 @@ export function setupTripleLayerHandlers(): void {
     try {
       const db = getDatabase();
       const stmt = db.prepare(`
-        INSERT INTO inet (
+        INSERT OR REPLACE INTO inet (
           UUID, acct, srvr, ptcl, port, path, labl,
           password_key_uuid, metadata_key_uuid,
           agrp, cdat, mdat, tomb
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
-      
+
       const now = getCurrentTimestamp();
       const uuid = credential.uuid || randomUUID();
-      
+
       stmt.run(
         uuid,
         credential.account,
@@ -124,9 +124,9 @@ export function setupTripleLayerHandlers(): void {
         credential.accessGroup,
         now,
         now,
-        0
+        credential.tombstone ? 1 : 0
       );
-      
+
       return { success: true, uuid };
     } catch (error) {
       return { success: false, error: String(error) };

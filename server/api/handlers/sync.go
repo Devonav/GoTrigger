@@ -316,6 +316,17 @@ func (h *SyncHandler) DeleteAllCredentials(c *gin.Context) {
 		return
 	}
 
+	// Broadcast sync event to connected clients
+	if h.hub != nil && deletedCount > 0 {
+		h.hub.BroadcastSyncEvent(&websocket.SyncEvent{
+			Type:      "credentials_changed",
+			UserID:    userID.(string),
+			Zone:      zone,
+			GenCount:  currentGenCount,
+			Timestamp: time.Now().Unix(),
+		})
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"gencount": currentGenCount,
 		"deleted":  deletedCount,

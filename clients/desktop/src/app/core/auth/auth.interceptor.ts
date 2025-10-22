@@ -14,6 +14,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
     });
     return next(cloned);
+  } else if (req.url.includes('/api/')) {
+    console.error('❌ No auth token found for API request:', req.url);
   }
 
   return next(req);

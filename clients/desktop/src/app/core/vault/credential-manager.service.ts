@@ -98,13 +98,25 @@ export class CredentialManagerService {
 
     const encryptedBlob = await this.crypto.encryptCredentialData(credentialData, importedContentKey);
 
+    console.log('🔐 Creating credential - encryption details:');
+    console.log('  - wrappedKey length:', encryptedBlob.wrappedKey.length, 'bytes');
+    console.log('  - encItem length:', encryptedBlob.encItem.length, 'bytes');
+    console.log('  - data IV length:', encryptedBlob.iv.length, 'bytes');
+
+    // Combine encItem and data IV (data IV goes at the end)
+    const encItemWithIv = new Uint8Array(encryptedBlob.encItem.length + encryptedBlob.iv.length);
+    encItemWithIv.set(encryptedBlob.encItem, 0);
+    encItemWithIv.set(encryptedBlob.iv, encryptedBlob.encItem.length);
+
+    console.log('  - encItemWithIv length:', encItemWithIv.length, 'bytes');
+
     const syncRecord: SyncRecord = {
       zone,
       uuid: credentialUUID,
       parentKeyUUID: passwordKeyUUID,
       gencount: 0,
       wrappedKey: encryptedBlob.wrappedKey,
-      encItem: encryptedBlob.encItem,
+      encItem: encItemWithIv,  // Now includes the data IV at the end
       encVersion: 1,
       contextID: 'default',
       tombstone: false,
@@ -129,13 +141,20 @@ export class CredentialManagerService {
     }
 
     const ivLength = 12;
-    const wrappedKeyData = syncRecord.wrappedKey.slice(0, -ivLength);
-    const iv = syncRecord.wrappedKey.slice(-ivLength);
+
+    // Extract data IV from encItem (last 12 bytes)
+    const encItem = syncRecord.encItem.slice(0, -ivLength);
+    const dataIv = syncRecord.encItem.slice(-ivLength);
+
+    console.log('🔓 Decrypting credential', uuid, ':');
+    console.log('  - wrappedKey length:', syncRecord.wrappedKey.length, 'bytes');
+    console.log('  - encItem length:', encItem.length, 'bytes');
+    console.log('  - data IV length:', dataIv.length, 'bytes');
 
     const decryptedData = await this.crypto.decryptCredentialData(
-      wrappedKeyData,
-      syncRecord.encItem,
-      iv
+      syncRecord.wrappedKey,  // This contains wrappedKey + wrap IV
+      encItem,                // This is just the encrypted data
+      dataIv                  // This is the data IV
     );
 
     return {
@@ -146,6 +165,7 @@ export class CredentialManagerService {
 
   async getAllCredentials(): Promise<VaultCredential[]> {
     const allMetadata = await this.storage.getAllCredentialMetadata();
+    console.log('🔍 CredentialManager.getAllCredentials: Found', allMetadata.length, 'metadata records');
     const credentials: VaultCredential[] = [];
 
     for (const metadata of allMetadata) {
@@ -153,12 +173,18 @@ export class CredentialManagerService {
         continue;
       }
 
-      const credential = await this.getCredential(metadata.uuid);
-      if (credential) {
-        credentials.push(credential);
+      try {
+        const credential = await this.getCredential(metadata.uuid);
+        if (credential) {
+          credentials.push(credential);
+        }
+      } catch (error) {
+        console.error('❌ CredentialManager: Failed to decrypt credential', metadata.uuid, ':', error);
+        console.error('   This credential was likely encrypted with a different master password');
       }
     }
 
+    console.log('🔍 CredentialManager.getAllCredentials: Successfully decrypted', credentials.length, 'credentials');
     return credentials;
   }
 
@@ -183,13 +209,15 @@ export class CredentialManagerService {
       const syncRecord = await this.getSyncRecordByUUID(uuid);
       if (syncRecord) {
         const ivLength = 12;
-        const wrappedKeyData = syncRecord.wrappedKey.slice(0, -ivLength);
-        const iv = syncRecord.wrappedKey.slice(-ivLength);
+
+        // Extract data IV from encItem
+        const encItem = syncRecord.encItem.slice(0, -ivLength);
+        const dataIv = syncRecord.encItem.slice(-ivLength);
 
         const currentData = await this.crypto.decryptCredentialData(
-          wrappedKeyData,
-          syncRecord.encItem,
-          iv
+          syncRecord.wrappedKey,  // wrappedKey + wrap IV
+          encItem,                // encrypted data only
+          dataIv                  // data IV
         );
 
         const newData: DecryptedCredentialData = {
@@ -205,13 +233,18 @@ export class CredentialManagerService {
 
         const unwrappedIv = passwordKey.data.slice(-12);
         const unwrappedKeyData = passwordKey.data.slice(0, -12);
-        
+
         const contentKey = await this.crypto.unwrapKey(unwrappedKeyData, unwrappedIv);
 
         const encryptedBlob = await this.crypto.encryptCredentialData(newData, contentKey);
 
+        // Combine encItem and data IV
+        const encItemWithIv = new Uint8Array(encryptedBlob.encItem.length + encryptedBlob.iv.length);
+        encItemWithIv.set(encryptedBlob.encItem, 0);
+        encItemWithIv.set(encryptedBlob.iv, encryptedBlob.encItem.length);
+
         syncRecord.wrappedKey = encryptedBlob.wrappedKey;
-        syncRecord.encItem = encryptedBlob.encItem;
+        syncRecord.encItem = encItemWithIv;  // Now includes data IV
         syncRecord.updatedAt = Date.now() / 1000;
 
         await this.storage.createSyncRecord(syncRecord);

@@ -49,14 +49,38 @@ type HIBPBreach struct {
 	IsMalware    bool      `json:"IsMalware"`
 }
 
+// CVE data for a company
+type CVEMetric struct {
+	CVSSV3 struct {
+		BaseScore    float64 `json:"baseScore"`
+		BaseSeverity string  `json:"baseSeverity"`
+	} `json:"cvssV3"`
+}
+
+type CVEItemSimple struct {
+	ID          string  `json:"id"`
+	Description string  `json:"description"`
+	Published   string  `json:"published"`
+	Score       float64 `json:"score"`
+	Severity    string  `json:"severity"`
+}
+
+type CompanyCVEData struct {
+	TotalCVEs    int             `json:"total_cves"`
+	HighestScore float64         `json:"highest_score"`
+	HighestLevel string          `json:"highest_level"` // CRITICAL/HIGH/MEDIUM/LOW
+	TopCVEs      []CVEItemSimple `json:"top_cves"`      // Top 3 by severity
+}
+
 // Our unified response format
 type LeakSource struct {
-	Source      string   `json:"source"`
-	Date        string   `json:"date"`
-	DataTypes   []string `json:"data_types"`
-	Description string   `json:"description"`
-	PwnCount    int      `json:"pwn_count"`
-	IsVerified  bool     `json:"is_verified"`
+	Source      string          `json:"source"`
+	Date        string          `json:"date"`
+	DataTypes   []string        `json:"data_types"`
+	Description string          `json:"description"`
+	PwnCount    int             `json:"pwn_count"`
+	IsVerified  bool            `json:"is_verified"`
+	CVEData     *CompanyCVEData `json:"cve_data,omitempty"` // NEW: CVE enrichment
 }
 
 type LeakResponse struct {
@@ -92,9 +116,50 @@ func CheckEmail(c *gin.Context) {
 		return
 	}
 
-	// Cache the result for 24 hours
+	// Cache the result for 24 hours (without CVE data for faster response)
 	if err := CacheBreachReport(req.Email, leakData, 24*time.Hour); err != nil {
 		fmt.Printf("Failed to cache breach report (non-fatal): %v\n", err)
+	}
+
+	c.JSON(http.StatusOK, leakData)
+}
+
+// EnrichWithCVE enriches existing breach report with CVE data
+func EnrichWithCVE(c *gin.Context) {
+	var req CheckEmailRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Get breach data from cache or HIBP
+	cachedData, err := GetCachedBreachReport(req.Email)
+	if err != nil {
+		fmt.Printf("Redis cache error (non-fatal): %v\n", err)
+	}
+
+	var leakData *LeakResponse
+	if cachedData != nil {
+		leakData = cachedData
+	} else {
+		// If not cached, fetch from HIBP
+		leakData, err = callHIBPAPI(req.Email)
+		if err != nil {
+			fmt.Printf("HIBP API error: %v\n", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to check email: %v", err)})
+			return
+		}
+	}
+
+	// Enrich with CVE data
+	if len(leakData.LeakedData) > 0 {
+		fmt.Printf("🔍 Enriching %d breaches with CVE data...\n", len(leakData.LeakedData))
+		enrichLeaksWithCVEData(leakData)
+	}
+
+	// Update cache with enriched data
+	if err := CacheBreachReport(req.Email, leakData, 24*time.Hour); err != nil {
+		fmt.Printf("Failed to cache enriched breach report (non-fatal): %v\n", err)
 	}
 
 	c.JSON(http.StatusOK, leakData)

@@ -36,6 +36,13 @@ export class UnlockVaultComponent implements OnInit {
 
   async ngOnInit() {
     try {
+      // Check if user is logged in first
+      if (!this.sessionStorage.hasValidSession()) {
+        console.log('❌ No valid session found. Redirecting to login...');
+        this.router.navigate(['/auth/login']);
+        return;
+      }
+
       await this.storage.initialize();
 
       // Check if vault is initialized - if not, redirect to setup
@@ -80,11 +87,13 @@ export class UnlockVaultComponent implements OnInit {
     try {
       const salt = await this.getSalt();
       const isFirstTime = !salt;
+      console.log('🔐 Unlock: Retrieved salt:', salt ? `${salt.length} bytes` : 'NONE (first time)');
 
-      await this.crypto.deriveMasterKey(this.masterPassword, salt);
+      const result = await this.crypto.deriveMasterKey(this.masterPassword, salt);
+      console.log('🔐 Unlock: Master key derived successfully');
 
       if (isFirstTime) {
-        await this.saveSalt();
+        await this.saveSalt(result.salt);
         await this.savePasswordVerification();
       } else {
         const isValid = await this.verifyPassword();
@@ -143,7 +152,9 @@ export class UnlockVaultComponent implements OnInit {
 
       console.log('✅ Password retrieved from keychain');
       const salt = await this.getSalt();
+      console.log('🔐 Biometric Unlock: Retrieved salt:', salt ? `${salt.length} bytes` : 'NONE');
       await this.crypto.deriveMasterKey(password, salt);
+      console.log('🔐 Biometric Unlock: Master key derived successfully');
 
       this.onVaultUnlocked();
     } catch (error) {
@@ -174,10 +185,10 @@ export class UnlockVaultComponent implements OnInit {
     return undefined;
   }
 
-  private async saveSalt() {
-    const masterKey = await this.crypto.deriveMasterKey(this.masterPassword);
-    const saltB64 = btoa(String.fromCharCode(...Array.from(masterKey.salt)));
+  private async saveSalt(salt: Uint8Array) {
+    const saltB64 = btoa(String.fromCharCode(...Array.from(salt)));
     await this.storage.setConfig('master_salt', saltB64);
+    console.log('💾 Saved salt to storage:', salt.length, 'bytes');
   }
 
   private async savePasswordVerification() {

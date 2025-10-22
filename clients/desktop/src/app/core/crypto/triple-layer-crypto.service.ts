@@ -162,7 +162,7 @@ export class TripleLayerCryptoService {
     // Convert to proper BufferSource type
     const wrappedKeyBuffer = new Uint8Array(wrappedKey).buffer;
     const wrapIvBuffer = new Uint8Array(wrapIv);
-    
+
     const contentKey = await crypto.subtle.unwrapKey(
       'raw',
       wrappedKeyBuffer,
@@ -176,7 +176,7 @@ export class TripleLayerCryptoService {
     // Decrypt the data
     const dataIvBuffer = new Uint8Array(iv);
     const encItemBuffer = new Uint8Array(encItem).buffer;
-    
+
     const decryptedBuffer = await crypto.subtle.decrypt(
       { name: 'AES-GCM', iv: dataIvBuffer },
       contentKey,
@@ -185,7 +185,7 @@ export class TripleLayerCryptoService {
 
     const decoder = new TextDecoder();
     const jsonString = decoder.decode(decryptedBuffer);
-    
+
     return JSON.parse(jsonString);
   }
 

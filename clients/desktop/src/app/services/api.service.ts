@@ -168,10 +168,14 @@ export class ApiService {
     );
   }
 
-  pullTripleLayerSync(zone: string, lastGencount: number): Observable<TripleLayerPullResponse> {
+  pullTripleLayerSync(zone: string, lastGencount: number, includeTombstoned: boolean = true): Observable<TripleLayerPullResponse> {
     return this.http.post<TripleLayerPullResponse>(
       `${this.baseUrl}/api/v1/sync/pull`,
-      { zone, last_gencount: lastGencount },
+      {
+        zone,
+        last_gencount: lastGencount,
+        include_tombstoned: includeTombstoned
+      },
       { headers: this.getHeaders() }
     );
   }

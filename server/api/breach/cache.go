@@ -110,3 +110,58 @@ func InvalidateBreachCache(email string) error {
 	fmt.Printf("🗑️  Redis cache INVALIDATED for %s\n", email)
 	return nil
 }
+
+// GetCachedCompanyCVE retrieves cached CVE data for a company
+func GetCachedCompanyCVE(company string) (*CompanyCVEData, error) {
+	if redisClient == nil {
+		return nil, fmt.Errorf("Redis client not initialized")
+	}
+
+	key := fmt.Sprintf("cve:company:%s", company)
+	val, err := redisClient.Get(ctx, key).Result()
+
+	if err == redis.Nil {
+		// Cache miss
+		return nil, nil
+	} else if err != nil {
+		// Redis error
+		return nil, err
+	}
+
+	// Cache hit - deserialize
+	var cveData CompanyCVEData
+	if err := json.Unmarshal([]byte(val), &cveData); err != nil {
+		return nil, fmt.Errorf("failed to deserialize cached CVE data: %v", err)
+	}
+
+	fmt.Printf("🔥 Redis cache HIT for company %s CVEs\n", company)
+	return &cveData, nil
+}
+
+// CacheCompanyCVE stores CVE data for a company in Redis
+func CacheCompanyCVE(company string, cveData *CompanyCVEData, ttl time.Duration) error {
+	if redisClient == nil {
+		return fmt.Errorf("Redis client not initialized")
+	}
+
+	key := fmt.Sprintf("cve:company:%s", company)
+
+	// Serialize to JSON
+	data, err := json.Marshal(cveData)
+	if err != nil {
+		return fmt.Errorf("failed to serialize CVE data: %v", err)
+	}
+
+	// Store with TTL (default: 7 days)
+	if ttl == 0 {
+		ttl = 7 * 24 * time.Hour
+	}
+
+	err = redisClient.Set(ctx, key, data, ttl).Err()
+	if err != nil {
+		return fmt.Errorf("failed to cache CVE data: %v", err)
+	}
+
+	fmt.Printf("💾 Redis cache SET for company %s CVEs (TTL: %v)\n", company, ttl)
+	return nil
+}
