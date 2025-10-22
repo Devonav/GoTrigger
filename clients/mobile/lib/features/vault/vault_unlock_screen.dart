@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import '../../services/vault_service.dart';
 
 class VaultUnlockScreen extends StatefulWidget {
   const VaultUnlockScreen({super.key});
@@ -75,13 +76,19 @@ class _VaultUnlockScreenState extends State<VaultUnlockScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Derive encryption key from password and unlock vault
-      await Future.delayed(const Duration(seconds: 1)); // Simulate processing
+      // Load salt from storage (if user has logged in before)
+      final salt = await VaultService.loadSalt();
+
+      // Derive encryption key from password
+      await VaultService.initializeCrypto(_passwordController.text, salt: salt);
+
+      print('✅ Master key derived successfully');
 
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/vault-list');
       }
     } catch (e) {
+      print('❌ Failed to unlock vault: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

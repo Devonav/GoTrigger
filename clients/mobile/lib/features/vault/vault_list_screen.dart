@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../shared/models/credential.dart';
 import '../../services/api_service.dart';
 import '../../services/websocket_service.dart';
+import 'import_screen.dart';
 
 class VaultListScreen extends StatefulWidget {
   const VaultListScreen({super.key});
@@ -254,6 +255,16 @@ class _VaultListScreenState extends State<VaultListScreen> {
           PopupMenuButton(
             itemBuilder: (context) => [
               const PopupMenuItem(
+                value: 'import',
+                child: Row(
+                  children: [
+                    Icon(Icons.upload_file),
+                    SizedBox(width: 8),
+                    Text('Import Passwords'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
                 value: 'settings',
                 child: Row(
                   children: [
@@ -284,11 +295,20 @@ class _VaultListScreenState extends State<VaultListScreen> {
                 ),
               ),
             ],
-            onSelected: (value) {
+            onSelected: (value) async {
               if (value == 'logout') {
                 Navigator.of(context).pushReplacementNamed('/');
               } else if (value == 'delete_all') {
                 _showDeleteAllConfirmation();
+              } else if (value == 'import') {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ImportScreen()),
+                );
+                // Reload credentials if import was successful
+                if (result == true) {
+                  _loadCredentials();
+                }
               }
             },
           ),

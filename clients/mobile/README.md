@@ -33,7 +33,8 @@ flutter clean && flutter pub get && flutter run
 - ✅ Flutter project structure
 - ✅ GraphQL client for server communication
 - ✅ REST API service for authentication
-- ✅ End-to-end encryption (ChaCha20-Poly1305)
+- ✅ **Triple-layer encryption (AES-256-GCM)** matching desktop
+- ✅ **PBKDF2 master key derivation** (100,000 iterations)
 - ✅ Credential model matching desktop client
 - ✅ **Face ID / Touch ID biometric unlock**
 - ✅ **Direct vault access with biometric login** (skips master password screen)
@@ -49,8 +50,12 @@ flutter clean && flutter pub get && flutter run
 - ✅ **Real-time sync via WebSocket** (auto-refresh when credentials change)
 - ✅ **Cross-platform sync** with desktop client
 - ✅ **Environment configuration** for easy server URL switching
+- ✅ **Password import** from 45+ password managers (CSV/JSON)
+- ✅ **Breach Report** - Check emails against Have I Been Pwned database
+- ✅ **CVE Security Alerts** - Search and view latest CVE vulnerabilities
 
 ### In Progress
+- 🚧 **Master key salt sync** (currently each device generates own salt)
 - 🚧 Add/Edit credential functionality
 - 🚧 Delete credential functionality
 - 🚧 Local SQLite storage for offline access
