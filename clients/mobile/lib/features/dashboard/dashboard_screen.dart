@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../breach_report/breach_report_screen.dart';
+import '../cve_alerts/cve_alerts_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -37,14 +39,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _navigateToBreachReport() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Breach Report - Coming Soon')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const BreachReportScreen()),
     );
   }
 
   void _navigateToCVEAlerts() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('CVE Security Alerts - Coming Soon')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CveAlertsScreen()),
     );
   }
 
