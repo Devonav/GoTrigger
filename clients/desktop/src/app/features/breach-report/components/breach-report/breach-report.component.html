@@ -91,6 +91,23 @@
                 <p>Your email <strong>{{ leakResult()!.email }}</strong> was found in the following data breaches:</p>
               </div>
 
+              @if (!hasCVEData() && !isCVELoading()) {
+                <button class="btn-check-cve" (click)="checkCVERisk()">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M9 12l2 2 4-4"></path>
+                  </svg>
+                  Check CVE Security Risk
+                </button>
+              }
+
+              @if (isCVELoading()) {
+                <div class="cve-loading">
+                  <div class="spinner-large"></div>
+                  <p>Analyzing security vulnerabilities... This may take up to a minute.</p>
+                </div>
+              }
+
               <div class="breach-list">
                 @for (leak of leakResult()!.leaked_data; track leak.source) {
                   <div class="breach-item">
@@ -104,6 +121,16 @@
                               <polyline points="9 12 11 14 15 10"></polyline>
                             </svg>
                             Verified
+                          </span>
+                        }
+                        @if (leak.cve_data && leak.cve_data.highest_level !== 'NONE' && leak.cve_data.highest_level !== 'UNKNOWN' && leak.cve_data.highest_score > 0) {
+                          <span
+                            class="cve-severity-badge"
+                            [style.background-color]="getCVESeverityColor(leak.cve_data.highest_level) + '20'"
+                            [style.border-color]="getCVESeverityColor(leak.cve_data.highest_level)"
+                            [style.color]="getCVESeverityColor(leak.cve_data.highest_level)"
+                            [title]="'CVE Risk: ' + leak.cve_data.highest_level + ' (' + leak.cve_data.highest_score.toFixed(1) + ')'">
+                            {{ getCVESeverityIcon(leak.cve_data.highest_level) }} {{ leak.cve_data.highest_level }} {{ leak.cve_data.highest_score.toFixed(1) }}
                           </span>
                         }
                       </div>

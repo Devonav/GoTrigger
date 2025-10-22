@@ -7,6 +7,7 @@ import { VaultService } from '../../services/vault.service';
 import { AuthService } from '@core/auth/auth.service';
 import { SessionStorageService } from '@core/storage/session-storage.service';
 import { WebSocketService } from '@core/sync/websocket.service';
+import { TripleLayerSyncService } from '@core/sync/triple-layer-sync.service';
 import { ImportDialogComponent } from '../import-dialog/import-dialog.component';
 import { ImportResult } from '../../services/import.service';
 
@@ -77,7 +78,8 @@ export class VaultListComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private sessionStorage: SessionStorageService,
     private router: Router,
-    private wsService: WebSocketService
+    private wsService: WebSocketService,
+    private syncService: TripleLayerSyncService
   ) {}
 
   async ngOnInit() {
@@ -88,9 +90,13 @@ export class VaultListComponent implements OnInit, OnDestroy {
 
     this.isLoading.set(true);
     try {
+      console.log('🔍 VaultList ngOnInit: Loading credentials...');
+      // Ensure storage is initialized before loading
+      await this.vaultService.ensureInitialized();
       await this.vaultService.loadCredentials();
+      console.log('✅ VaultList ngOnInit: Loaded', this.credentials().length, 'credentials');
     } catch (error) {
-      console.error('Failed to load credentials:', error);
+      console.error('❌ Failed to load credentials:', error);
     } finally {
       this.isLoading.set(false);
     }
@@ -110,16 +116,24 @@ export class VaultListComponent implements OnInit, OnDestroy {
       this.wsService.connect('default');
 
       // Listen for sync events
-      this.syncSubscription = this.wsService.getSyncEvents().subscribe(event => {
+      this.syncSubscription = this.wsService.getSyncEvents().subscribe(async event => {
         console.log('📥 Sync event received:', event.type);
 
         // Auto-refresh credentials when changes detected
         if (event.type === 'credentials_changed') {
           console.log('🔄 Auto-refreshing credentials due to sync event');
-          this.vaultService.loadCredentials().then(() => {
-            // Show notification
+
+          try {
+            // Pull latest data from server first (includes tombstoned credentials)
+            await this.syncService.pullFromServer('default');
+            console.log('✅ Pulled latest data from server');
+
+            // Then reload credentials from local database
+            await this.vaultService.loadCredentials();
             console.log('✅ Credentials synced from another device');
-          });
+          } catch (error) {
+            console.error('❌ Failed to sync credentials:', error);
+          }
         }
       });
     } catch (error) {
@@ -312,11 +326,42 @@ export class VaultListComponent implements OnInit, OnDestroy {
   }
 
   async handleImportComplete(result: ImportResult): Promise<void> {
-    console.log('Import completed:', result);
-
     // Reload credentials to show newly imported ones
     if (result.success && result.imported > 0) {
       await this.vaultService.loadCredentials();
+    }
+  }
+
+  async resetVaultEntirely(): Promise<void> {
+    const confirmed = confirm(
+      '⚠️ RESET VAULT COMPLETELY?\n\n' +
+      'This will:\n' +
+      '• Delete ALL credentials\n' +
+      '• Clear master password & salt\n' +
+      '• Reset vault to initial state\n\n' +
+      'You will need to set up vault again.\n\n' +
+      'This CANNOT be undone!'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    try {
+      // Clear everything
+      await this.vaultService.clearLocalStorage();
+      await this.vaultService.resetVaultConfig();
+
+      alert('✅ Vault reset complete!\n\nPlease restart the app and set up your vault again.');
+
+      // Reload the app
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to reset vault:', error);
+      alert('❌ Failed to reset vault. Check console for details.');
+    } finally {
+      this.isLoading.set(false);
     }
   }
 

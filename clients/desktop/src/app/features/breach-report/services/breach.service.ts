@@ -3,6 +3,21 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { getApiUrl } from '../../../../environments/environment';
 
+export interface CVEItemSimple {
+  id: string;
+  description: string;
+  published: string;
+  score: number;
+  severity: string;
+}
+
+export interface CompanyCVEData {
+  total_cves: number;
+  highest_score: number;
+  highest_level: string; // CRITICAL/HIGH/MEDIUM/LOW/NONE
+  top_cves: CVEItemSimple[];
+}
+
 export interface LeakSource {
   source: string;
   date: string;
@@ -10,6 +25,7 @@ export interface LeakSource {
   description?: string;
   pwn_count?: number;
   is_verified?: boolean;
+  cve_data?: CompanyCVEData; // NEW: CVE enrichment
 }
 
 export interface LeakResponse {
@@ -30,6 +46,13 @@ export class BreachService {
   checkEmail(email: string): Observable<LeakResponse> {
     return this.http.post<LeakResponse>(
       `${this.API_URL}/breach/check`,
+      { email }
+    );
+  }
+
+  enrichWithCVE(email: string): Observable<LeakResponse> {
+    return this.http.post<LeakResponse>(
+      `${this.API_URL}/breach/enrich-cve`,
       { email }
     );
   }

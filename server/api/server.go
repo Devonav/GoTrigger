@@ -94,6 +94,7 @@ func (s *Server) setupRoutes() {
 
 		// Breach Report (LeakOSINT)
 		protected.POST("/breach/check", breach.CheckEmail)
+		protected.POST("/breach/enrich-cve", breach.EnrichWithCVE)
 
 		// CVE Security Alerts (NIST)
 		protected.POST("/cve/search", cve.SearchCVEs)
