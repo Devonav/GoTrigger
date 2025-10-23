@@ -1,5 +1,3 @@
-# Create a proper Jenkinsfile in your project
-cat > Jenkinsfile << 'EOF'
 pipeline {
     agent any
 
@@ -88,4 +86,3 @@ pipeline {
         }
     }
 }
-EOF
