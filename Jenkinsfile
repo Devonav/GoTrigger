@@ -1,4 +1,4 @@
-# Create a clean Jenkinsfile without the initial comment
+# Create Jenkinsfile in the current directory
 cat > Jenkinsfile << 'EOF'
 pipeline {
     agent any
