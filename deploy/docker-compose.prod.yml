@@ -43,6 +43,9 @@ services:
 
   # Password Sync API Server
   api:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
     image: devonav/password-sync:latest
     container_name: password-sync-api
     restart: unless-stopped
