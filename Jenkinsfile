@@ -1,3 +1,5 @@
+# Create a clean Jenkinsfile without the initial comment
+cat > Jenkinsfile << 'EOF'
 pipeline {
     agent any
 
@@ -86,3 +88,4 @@ pipeline {
         }
     }
 }
+EOF
