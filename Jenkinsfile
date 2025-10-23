@@ -1,5 +1,3 @@
-# Create Jenkinsfile in the current directory
-cat > Jenkinsfile << 'EOF'
 pipeline {
     agent any
 
@@ -50,7 +48,7 @@ pipeline {
                 sh """
                     echo "🏥 Running health checks..."
                     sleep 15
-                    
+
                     # Test API health endpoint
                     echo "Testing API health..."
                     if curl -f http://${SERVER_IP}:8081/api/v1/health; then
@@ -88,4 +86,3 @@ pipeline {
         }
     }
 }
-EOF
