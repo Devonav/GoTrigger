@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
 import '../config/environment.dart';
 
 /// SyncEvent model matching the server
@@ -37,7 +38,7 @@ class WebSocketService {
   static final String _baseWsUrl = Environment.wsUrl;
   static final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  WebSocketChannel? _channel;
+  IOWebSocketChannel? _channel;
   final StreamController<SyncEvent> _syncEventController = StreamController<SyncEvent>.broadcast();
   bool _isConnected = false;
   Timer? _reconnectTimer;
@@ -65,12 +66,19 @@ class WebSocketService {
 
       _currentZone = zone;
 
-      // Create WebSocket connection with Authorization header in URL
-      // Pass token as query parameter since web_socket_channel 3.0 doesn't support headers in connect()
-      final wsUrl = '$_baseWsUrl/sync/live?zone=$zone&token=$token';
-      _channel = WebSocketChannel.connect(
-        Uri.parse(wsUrl),
+      // Create WebSocket connection with Authorization header
+      final wsUrl = '$_baseWsUrl/sync/live?zone=$zone';
+
+      // Use IOWebSocketChannel to support custom headers
+      final uri = Uri.parse(wsUrl);
+      final socket = await WebSocket.connect(
+        uri.toString(),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
       );
+
+      _channel = IOWebSocketChannel(socket);
 
       _isConnected = true;
       debugPrint('✅ WebSocket connected: zone=$zone');

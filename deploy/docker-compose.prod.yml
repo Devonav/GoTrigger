@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (dedicated for Password Sync)
+  postgres:
+    image: postgres:15-alpine
+    container_name: password-sync-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-password_sync}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    ports:
+      - "5433:5432"  # Use 5433 externally to avoid conflict with existing Citus on 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./server/storage/postgres_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-password_sync}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - password-sync-net
+
+  # Redis Cache (dedicated for Password Sync - Breach Reports)
+  redis:
+    image: redis:7-alpine
+    container_name: password-sync-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"  # Use 6380 externally to avoid conflict
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-changeme}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - password-sync-net
+
+  # Password Sync API Server
+  api:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    container_name: password-sync-api
+    restart: unless-stopped
+    ports:
+      - "8081:8081"  # API on port 8081
+    environment:
+      # PostgreSQL connection
+      POSTGRES_CONN: "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-password_sync}?sslmode=disable"
+
+      # Redis connection
+      REDIS_ADDR: "redis:6379"
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-changeme}
+
+      # JWT Secret
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production-to-256-bit-secret}
+
+      # Server port
+      PORT: "8081"
+
+      # API Keys for external services
+      HIBP_API_KEY: ${HIBP_API_KEY:-}
+      HIBP_API_URL: https://haveibeenpwned.com/api/v3
+      NIST_API_KEY: ${NIST_API_KEY:-}
+      NIST_API_URL: https://services.nvd.nist.gov/rest/json/cves/2.0
+    command: >
+      -postgres="postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-password_sync}?sslmode=disable"
+      -port=8081
+      -jwt-secret="${JWT_SECRET:-change-this-in-production-to-256-bit-secret}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - password-sync-net
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  password-sync-net:
+    driver: bridge

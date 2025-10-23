@@ -6,8 +6,8 @@ export const environment = {
   production: true,
 
   // API Configuration - Update for production deployment
-  API_BASE_URL: 'https://your-production-domain.com',
-  WS_BASE_URL: 'wss://your-production-domain.com',
+  API_BASE_URL: 'http://5.161.200.4:8081',
+  WS_BASE_URL: 'ws://5.161.200.4:8081',
 
   // API Version
   API_VERSION: 'v1',
