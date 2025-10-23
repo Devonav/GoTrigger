@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Docker Hub credentials (configure in Jenkins)
         DOCKER_REGISTRY = 'docker.io'
-        DOCKER_IMAGE = 'deeplyprofound/password-sync'
+        DOCKER_IMAGE = 'devonav/password-sync'
 
         // Production server
         PROD_SERVER = 'root@5.161.200.4'
