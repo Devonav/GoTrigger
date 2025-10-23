@@ -64,25 +64,17 @@ pipeline {
 
     post {
         success {
-            sh '''
-                echo "🎉 DEPLOYMENT SUCCESSFUL!"
-                echo "📱 API: http://${SERVER_IP}:8081/api/v1/health"
-                echo "🔧 Build: ${BUILD_NUMBER}"
-                echo "⏰ Time: $(date)"
-            '''
+            echo '🎉 DEPLOYMENT SUCCESSFUL!'
+            echo "📱 API: http://${env.SERVER_IP}:8081/api/v1/health"
+            echo "🔧 Build: ${env.BUILD_NUMBER}"
         }
         failure {
-            sh '''
-                echo "💥 DEPLOYMENT FAILED!"
-                echo "🔧 Build: ${BUILD_NUMBER}"
-                echo "📋 Check the logs above for errors"
-            '''
+            echo '💥 DEPLOYMENT FAILED!'
+            echo "🔧 Build: ${env.BUILD_NUMBER}"
+            echo '📋 Check the logs above for errors'
         }
         always {
-            sh '''
-                echo "🧹 Pipeline cleanup completed"
-                echo "📊 Build Result: ${currentBuild.result}"
-            '''
+            echo '🧹 Pipeline cleanup completed'
         }
     }
 }
