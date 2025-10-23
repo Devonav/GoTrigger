@@ -121,3 +121,24 @@ desktop-package-win:
 desktop-package-linux:
 	@echo "Packaging desktop client for Linux..."
 	cd clients/desktop && npm run package:linux
+
+# Production Deployment
+deploy-prod:
+	@echo "🚀 Deploying to production server..."
+	@./deploy/deploy.sh
+
+deploy-check:
+	@echo "🔍 Checking production server status..."
+	@ssh root@5.161.200.4 "cd /root/app/password-sync && docker-compose ps && echo '' && docker-compose logs --tail=20 api"
+
+deploy-logs:
+	@echo "📋 Viewing production logs..."
+	@ssh root@5.161.200.4 "cd /root/app/password-sync && docker-compose logs -f"
+
+deploy-restart:
+	@echo "🔄 Restarting production services..."
+	@ssh root@5.161.200.4 "cd /root/app/password-sync && docker-compose restart"
+
+deploy-down:
+	@echo "⚠️  Stopping production services..."
+	@ssh root@5.161.200.4 "cd /root/app/password-sync && docker-compose down"

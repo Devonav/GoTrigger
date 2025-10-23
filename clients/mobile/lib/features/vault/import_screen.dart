@@ -102,12 +102,13 @@ class _ImportScreenState extends State<ImportScreen> {
           }
 
           // Add credential using VaultService (encrypts and syncs to server)
-          await VaultService.addCredential(
-            url: cred.url,
-            username: cred.username,
-            password: cred.password,
-            notes: cred.notes,
-          );
+          await VaultService.addCredential({
+            'title': cred.name ?? cred.url ?? 'Imported Credential',
+            'url': cred.url,
+            'username': cred.username,
+            'password': cred.password,
+            'notes': cred.notes,
+          });
 
           print('✅ Imported: ${cred.name ?? cred.url} - ${cred.username}');
           imported++;

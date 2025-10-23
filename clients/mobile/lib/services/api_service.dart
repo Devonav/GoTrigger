@@ -155,4 +155,91 @@ class ApiService {
       throw Exception(error['error'] ?? 'Failed to delete all credentials');
     }
   }
+
+  /// Check email for breaches using Have I Been Pwned
+  static Future<Map<String, dynamic>> checkEmailBreach({
+    required String email,
+  }) async {
+    final headers = await getAuthHeaders();
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/breach/check'),
+      headers: headers,
+      body: jsonEncode({
+        'email': email,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      final error = jsonDecode(response.body);
+      throw Exception(error['error'] ?? 'Failed to check breach');
+    }
+  }
+
+  /// Enrich breach report with CVE data
+  static Future<Map<String, dynamic>> enrichWithCVE({
+    required String email,
+  }) async {
+    final headers = await getAuthHeaders();
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/breach/enrich-cve'),
+      headers: headers,
+      body: jsonEncode({
+        'email': email,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      final error = jsonDecode(response.body);
+      throw Exception(error['error'] ?? 'Failed to enrich with CVE');
+    }
+  }
+
+  /// Get latest CVEs from NIST
+  static Future<Map<String, dynamic>> getLatestCVEs({
+    int limit = 20,
+  }) async {
+    final headers = await getAuthHeaders();
+
+    final response = await http.get(
+      Uri.parse('$_baseUrl/cve/latest?limit=$limit'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      final error = jsonDecode(response.body);
+      throw Exception(error['error'] ?? 'Failed to get latest CVEs');
+    }
+  }
+
+  /// Search CVEs by keyword
+  static Future<Map<String, dynamic>> searchCVEs({
+    required String keyword,
+    int limit = 20,
+  }) async {
+    final headers = await getAuthHeaders();
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/cve/search'),
+      headers: headers,
+      body: jsonEncode({
+        'keyword': keyword,
+        'limit': limit,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      final error = jsonDecode(response.body);
+      throw Exception(error['error'] ?? 'Failed to search CVEs');
+    }
+  }
 }
