@@ -1,0 +1,5 @@
+username,password,url,title,note,otpSecret,category
+workspace@company.com,NotionP@ss123,https://notion.so,Notion Workspace,Team workspace,,Work
+designer@email.com,FigmaSecure456#,https://figma.com,Figma Design,Design tool account,,Creative
+devops@company.com,Heroku$789,https://heroku.com,Heroku Platform,Cloud platform,,Development
+dba@company.com,Mongo2024%Pass,https://cloud.mongodb.com,MongoDB Atlas,Database cluster,JBSWY3DPEHPK3PXP,Development

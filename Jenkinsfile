@@ -6,6 +6,7 @@ pipeline {
         DOCKER_TAG = "${env.BUILD_NUMBER}"
         SERVER_IP = '5.161.200.4'
         DEPLOY_DIR = '/root/app/password-sync'
+        DOMAIN = 'gotrigger.org'
     }
 
     stages {
@@ -49,13 +50,18 @@ pipeline {
                     echo "🏥 Running health checks..."
                     sleep 15
 
-                    # Test API health endpoint
-                    echo "Testing API health..."
-                    if curl -f http://${SERVER_IP}:8081/api/v1/health; then
+                    # Test API health endpoint via HTTPS domain
+                    echo "Testing API health on https://${DOMAIN}..."
+                    if curl -f https://${DOMAIN}/api/v1/health; then
                         echo "✅ API health check passed!"
                     else
                         echo "❌ API health check failed"
-                        exit 1
+                        echo "Trying direct IP fallback..."
+                        if curl -f http://${SERVER_IP}:8081/api/v1/health; then
+                            echo "⚠️  API is up but domain might not be configured yet"
+                        else
+                            exit 1
+                        fi
                     fi
                 """
             }
@@ -65,7 +71,7 @@ pipeline {
     post {
         success {
             echo '🎉 DEPLOYMENT SUCCESSFUL!'
-            echo "📱 API: http://${env.SERVER_IP}:8081/api/v1/health"
+            echo "📱 API: https://${env.DOMAIN}/api/v1/health"
             echo "🔧 Build: ${env.BUILD_NUMBER}"
         }
         failure {

@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "encrypted": false,
+  "vaults": {
+    "personal": {
+      "name": "Personal",
+      "description": "Personal passwords",
+      "display": {
+        "color": 1,
+        "icon": 1
+      },
+      "items": [
+        {
+          "itemId": "item-1",
+          "data": {
+            "metadata": {
+              "name": "ProtonMail",
+              "note": "Secure email account",
+              "itemType": "login"
+            },
+            "content": {
+              "username": "secure@proton.me",
+              "password": "ProtonP@ss123",
+              "urls": ["https://mail.proton.me"],
+              "totpUri": "otpauth://totp/Proton?secret=JBSWY3DPEHPK3PXP"
+            }
+          }
+        },
+        {
+          "itemId": "item-2",
+          "data": {
+            "metadata": {
+              "name": "ProtonVPN",
+              "note": "VPN service",
+              "itemType": "login"
+            },
+            "content": {
+              "username": "vpn@proton.me",
+              "password": "VPN$ecure456",
+              "urls": ["https://account.protonvpn.com"]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

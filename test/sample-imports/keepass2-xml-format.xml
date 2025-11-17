@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<KeePassFile>
+  <Root>
+    <Group>
+      <Name>Root</Name>
+      <Entry>
+        <String><Key>Title</Key><Value>Gitlab Account</Value></String>
+        <String><Key>UserName</Key><Value>developer@company.com</Value></String>
+        <String><Key>Password</Key><Value>GitlabP@ss123</Value></String>
+        <String><Key>URL</Key><Value>https://gitlab.com</Value></String>
+        <String><Key>Notes</Key><Value>Company GitLab instance</Value></String>
+      </Entry>
+      <Group>
+        <Name>Work</Name>
+        <Entry>
+          <String><Key>Title</Key><Value>Jira Cloud</Value></String>
+          <String><Key>UserName</Key><Value>pm@company.com</Value></String>
+          <String><Key>Password</Key><Value>Jira$ecure456</Value></String>
+          <String><Key>URL</Key><Value>https://company.atlassian.net</Value></String>
+          <String><Key>Notes</Key><Value>Project management</Value></String>
+          <String><Key>otp</Key><Value>JBSWY3DPEHPK3PXP</Value></String>
+        </Entry>
+      </Group>
+      <Group>
+        <Name>Personal</Name>
+        <Entry>
+          <String><Key>Title</Key><Value>Reddit Premium</Value></String>
+          <String><Key>UserName</Key><Value>redditor@email.com</Value></String>
+          <String><Key>Password</Key><Value>Reddit2024#Pass</Value></String>
+          <String><Key>URL</Key><Value>https://reddit.com</Value></String>
+        </Entry>
+      </Group>
+    </Group>
+  </Root>
+</KeePassFile>

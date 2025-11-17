@@ -1,0 +1,5 @@
+Folder,Title,Login,Password,Website Address,Notes,Shared Folder,Custom Fields,TOTP
+Personal,Spotify Premium,premium@email.com,SpotifyP@ss123,https://spotify.com,Music streaming,,,,
+Work,Zoom Enterprise,meetings@company.com,Zoom$ecure456,https://zoom.us,Video conferencing,,,OneTimeCode,JBSWY3DPEHPK3PXP
+Development,NPM Registry,npm@company.com,NPM2024Pass#,https://npmjs.com,Package manager,,,,
+Personal,Steam Gaming,gamer@email.com,Steam%Pass789,https://steampowered.com,Game library,,,,

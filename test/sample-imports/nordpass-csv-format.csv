@@ -1,0 +1,4 @@
+name,url,username,password,note,cardholdername,cardnumber,cvc,expirydate,zipcode,folder,full_name,phone_number,email,address1,address2,city,country,state
+Stripe Dashboard,https://dashboard.stripe.com,payments@company.com,StripeP@ss123,Payment processing,,,,,,Work,,,,,,,,
+PayPal Business,https://paypal.com/business,business@company.com,PayPal$ecure456,Business account,,,,,,Finance,,,,,,,,
+DigitalOcean,https://cloud.digitalocean.com,cloud@company.com,DO2024Pass#,Cloud hosting,,,,,,Development,,,,,,,,

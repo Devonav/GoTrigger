@@ -43,8 +43,7 @@ export class DashboardComponent {
   }
 
   navigateToPasswordRotation(): void {
-    // Coming soon
-    alert('Password Rotation - Coming Soon');
+    this.router.navigate(['/password-generator']);
   }
 
   navigateToSettings(): void {

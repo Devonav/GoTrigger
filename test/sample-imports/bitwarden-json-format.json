@@ -1,0 +1,50 @@
+{
+  "encrypted": false,
+  "folders": [
+    {"id": "folder-1", "name": "Work"},
+    {"id": "folder-2", "name": "Personal"}
+  ],
+  "items": [
+    {
+      "id": "item-1",
+      "type": 1,
+      "name": "GitHub",
+      "notes": "Primary development account",
+      "favorite": true,
+      "folderId": "folder-1",
+      "login": {
+        "username": "developer@email.com",
+        "password": "GitHubP@ss123",
+        "totp": "JBSWY3DPEHPK3PXP",
+        "uris": [
+          {"uri": "https://github.com"},
+          {"uri": "https://github.com/login"}
+        ]
+      },
+      "fields": [
+        {"name": "API Key", "value": "ghp_abc123xyz", "type": 1},
+        {"name": "Organization", "value": "MyCompany", "type": 0}
+      ]
+    },
+    {
+      "id": "item-2",
+      "type": 1,
+      "name": "Netflix",
+      "notes": "Streaming service",
+      "favorite": false,
+      "folderId": "folder-2",
+      "login": {
+        "username": "watch@email.com",
+        "password": "NetflixP@ss456",
+        "uris": [{"uri": "https://netflix.com"}]
+      }
+    },
+    {
+      "id": "item-3",
+      "type": 2,
+      "name": "WiFi Password",
+      "notes": "Home network password: MyWiFi2024!",
+      "folderId": "folder-2"
+    }
+  ]
+}

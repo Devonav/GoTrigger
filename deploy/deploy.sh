@@ -64,7 +64,7 @@ ssh $SERVER_USER@$SERVER_IP "cd $DEPLOY_DIR && docker-compose ps"
 # Test API endpoint
 echo "🧪 Testing API endpoint..."
 sleep 5
-curl -f http://$SERVER_IP:8081/api/v1/health && echo "" || {
+curl -f https://gotrigger.org/api/v1/health && echo "" || {
     echo "❌ API health check failed"
     echo "📋 Checking logs..."
     ssh $SERVER_USER@$SERVER_IP "cd $DEPLOY_DIR && docker-compose logs --tail=50 api"
@@ -75,8 +75,8 @@ echo ""
 echo "✅ Deployment successful!"
 echo ""
 echo "📊 Service URLs:"
-echo "   API Health: http://$SERVER_IP:8081/api/v1/health"
-echo "   API Docs: http://$SERVER_IP:8081/api/v1"
+echo "   API Health: https://gotrigger.org/api/v1/health"
+echo "   API Docs: https://gotrigger.org/api/v1"
 echo ""
 echo "🔐 To seed test data:"
 echo "   ssh $SERVER_USER@$SERVER_IP"

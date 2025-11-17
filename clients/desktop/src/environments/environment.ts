@@ -16,14 +16,14 @@ export const environment = {
   // API Configuration
   // Change this to your computer's IP address when testing with mobile devices
   // e.g., 'http://192.168.86.22:8080' or keep as 'http://localhost:8080'
-  // Production server: 'http://5.161.200.4:8081'
-  API_BASE_URL: 'http://5.161.200.4:8081',
+  // Production server: 'https://gotrigger.org'
+  API_BASE_URL: 'https://gotrigger.org',
 
   // WebSocket Configuration
   // Change this to your computer's IP address when testing with mobile devices
   // e.g., 'ws://192.168.86.22:8080' or keep as 'ws://localhost:8080'
-  // Production server: 'ws://5.161.200.4:8081'
-  WS_BASE_URL: 'ws://5.161.200.4:8081',
+  // Production server: 'wss://gotrigger.org'
+  WS_BASE_URL: 'wss://gotrigger.org',
 
   // API Version
   API_VERSION: 'v1',
