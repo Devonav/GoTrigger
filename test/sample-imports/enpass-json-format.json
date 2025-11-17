@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "title": "Vercel Account",
+      "category": "login",
+      "fields": [
+        {
+          "label": "Username",
+          "value": "deploy@company.com",
+          "type": "username"
+        },
+        {
+          "label": "Password",
+          "value": "VercelP@ss123",
+          "type": "password"
+        },
+        {
+          "label": "Website",
+          "value": "https://vercel.com",
+          "type": "url"
+        }
+      ],
+      "note": "Frontend deployment platform"
+    },
+    {
+      "title": "Netlify Deploy",
+      "category": "login",
+      "fields": [
+        {
+          "label": "Username",
+          "value": "sites@company.com",
+          "type": "username"
+        },
+        {
+          "label": "Password",
+          "value": "Netlify$456",
+          "type": "password"
+        },
+        {
+          "label": "Website",
+          "value": "https://app.netlify.com",
+          "type": "url"
+        },
+        {
+          "label": "TOTP",
+          "value": "JBSWY3DPEHPK3PXP",
+          "type": "totp"
+        }
+      ]
+    }
+  ]
+}

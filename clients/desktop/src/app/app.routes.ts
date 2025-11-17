@@ -19,6 +19,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/cve-alerts/components/cve-alerts/cve-alerts.component').then(m => m.CveAlertsComponent)
   },
   {
+    path: 'password-generator',
+    loadComponent: () => import('./features/password-rotation/components/password-generator/password-generator.component').then(m => m.PasswordGeneratorComponent)
+  },
+  {
     path: 'auth',
     children: [
       {
