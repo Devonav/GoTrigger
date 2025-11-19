@@ -31,8 +31,8 @@
   },
   "private": true,
   "build": {
-    "appId": "com.deeplyprofound.passwordsync",
-    "productName": "Password Sync",
+    "appId": "com.deeplyprofound.app",
+    "productName": "DeeplyProfound",
     "directories": {
       "output": "release"
     },
