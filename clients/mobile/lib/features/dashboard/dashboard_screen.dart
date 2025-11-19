@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../breach_report/breach_report_screen.dart';
 import '../cve_alerts/cve_alerts_screen.dart';
+import '../../widgets/glassmorphic_container.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -75,41 +76,62 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F), // Mobile-friendly dark gray
-      appBar: AppBar(
-        title: const Text(
-          'Dashboard',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        backgroundColor: const Color(0xFF1A1A1A),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _logout,
-            tooltip: 'Logout',
-            style: IconButton.styleFrom(
-              foregroundColor: Colors.white.withOpacity(0.6),
-            ),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
+      backgroundColor: const Color(0xFF0A0A0A),
+      body: QuantumBackground(
+        child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Welcome Section
-              _buildWelcomeSection(colorScheme),
-              const SizedBox(height: 32),
+              // App Bar
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: const Color(0xFF7C3AED).withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const GradientText(
+                      text: 'Dashboard',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.logout, size: 22),
+                      onPressed: _logout,
+                      tooltip: 'Logout',
+                      style: IconButton.styleFrom(
+                        foregroundColor: const Color(0xFF7C3AED),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-              // Dashboard Tiles
-              _buildDashboardTiles(colorScheme),
+              // Scrollable Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Welcome Section
+                      _buildWelcomeSection(colorScheme),
+                      const SizedBox(height: 24),
+
+                      // Dashboard Tiles
+                      _buildDashboardTiles(colorScheme),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -118,34 +140,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildWelcomeSection(ColorScheme colorScheme) {
-    return Container(
+    return GlassmorphicContainer(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.1),
-          width: 1.5,
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Welcome back',
+          const GradientText(
+            text: 'Welcome back',
             style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-              letterSpacing: -0.02,
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.5,
             ),
           ),
           if (_userEmail.isNotEmpty) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             Text(
               _userEmail,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 14,
                 color: Colors.white.withOpacity(0.5),
               ),
             ),
@@ -169,15 +182,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
           icon: Icons.lock,
           title: 'Password Vault',
           subtitle: 'Manage passwords',
-          color: const Color(0xFF667EEA), // Indigo - matches desktop
+          color: const Color(0xFF7C3AED), // Quantum Purple
           onTap: _navigateToVault,
         ),
         _buildDashboardTile(
           context: context,
           icon: Icons.email,
           title: 'Mail Sync',
-          subtitle: 'Coming Soon',
-          color: const Color(0xFF4FACFE), // Sky Blue - matches desktop
+          subtitle: 'Sync and manage your email',
+          color: const Color(0xFF7C3AED), // Quantum Purple
           onTap: _navigateToMailSync,
         ),
         _buildDashboardTile(
@@ -224,51 +237,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
     required Color color,
     required VoidCallback onTap,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.12),
-          width: 1.5,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return GlassmorphicContainer(
+      padding: EdgeInsets.zero,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
-          splashColor: color.withOpacity(0.1),
-          highlightColor: color.withOpacity(0.05),
+          splashColor: const Color(0xFF7C3AED).withOpacity(0.2),
+          highlightColor: const Color(0xFF7C3AED).withOpacity(0.1),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  icon,
-                  size: 48,
-                  color: color,
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.15),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: color.withOpacity(0.3),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 32,
+                    color: color,
+                  ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
-                    letterSpacing: -0.01,
+                    letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   subtitle,
                   style: TextStyle(
