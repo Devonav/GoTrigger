@@ -3,11 +3,12 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #000000;
+  background: var(--bg-dark);
   position: relative;
   overflow: hidden;
   padding: 40px 20px;
 
+  // Quantum background with warning colors
   &::before {
     content: '';
     position: absolute;
@@ -15,19 +16,73 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 20% 50%, rgba(251, 191, 36, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 50%, rgba(239, 68, 68, 0.08) 0%, transparent 50%);
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(251, 191, 36, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(239, 68, 68, 0.06) 0%, transparent 50%);
+    animation: quantumPulse 15s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+@keyframes quantumPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
   }
 }
 
 .breach-card {
-  background: #0a0a0a;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  // Glassmorphism styling
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(124, 58, 237, 0.2);
   border-radius: 16px;
+  box-shadow:
+    0 8px 32px 0 rgba(31, 38, 135, 0.2),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   width: 100%;
   max-width: 900px;
   position: relative;
   z-index: 1;
+  overflow: hidden;
+  animation: fadeIn 0.6s ease-out;
+
+  // Rotating particle effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+    pointer-events: none;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .breach-header {
@@ -35,21 +90,26 @@
   align-items: center;
   justify-content: space-between;
   padding: 32px 40px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+  position: relative;
+  z-index: 1;
 
   .header-content {
     h1 {
       margin: 0 0 8px;
       font-size: 32px;
       font-weight: 600;
-      color: #ffffff;
+      background: linear-gradient(135deg, #7c3aed, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       letter-spacing: -0.02em;
     }
 
     p {
       margin: 0;
       font-size: 15px;
-      color: rgba(255, 255, 255, 0.4);
+      color: var(--text-muted);
     }
   }
 
@@ -58,19 +118,22 @@
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-secondary);
+    border: 1px solid rgba(124, 58, 237, 0.3);
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     font-size: 14px;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.16);
-      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(124, 58, 237, 0.5);
+      color: var(--text-primary);
+      transform: translateY(-2px);
     }
   }
 }
@@ -98,21 +161,25 @@
       input {
         flex: 1;
         padding: 14px 18px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(124, 58, 237, 0.2);
+        border-radius: 12px;
         font-size: 16px;
-        color: #ffffff;
-        transition: all 0.2s;
+        color: var(--text-primary);
+        transition: all 0.3s ease;
 
         &:focus {
           outline: none;
-          background: rgba(255, 255, 255, 0.05);
-          border-color: rgba(255, 255, 255, 0.16);
+          border-color: var(--primary);
+          box-shadow:
+            0 0 0 3px rgba(124, 58, 237, 0.1),
+            0 4px 12px rgba(124, 58, 237, 0.2);
         }
 
         &::placeholder {
-          color: rgba(255, 255, 255, 0.25);
+          color: var(--text-muted);
         }
 
         &:disabled {
@@ -126,18 +193,22 @@
         align-items: center;
         gap: 8px;
         padding: 14px 24px;
-        background: #ffffff;
-        color: #000000;
-        border: none;
-        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.8), rgba(99, 102, 241, 0.8));
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
         font-size: 15px;
         white-space: nowrap;
 
         &:hover:not(:disabled) {
-          background: rgba(255, 255, 255, 0.9);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px 0 rgba(124, 58, 237, 0.4);
+          border-color: rgba(255, 255, 255, 0.3);
         }
 
         &:disabled {
@@ -246,12 +317,29 @@
     flex-direction: column;
     gap: 16px;
     margin-bottom: 32px;
+    position: relative;
+    z-index: 1;
 
     .breach-item {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(124, 58, 237, 0.2);
       border-radius: 12px;
       padding: 20px;
+      box-shadow:
+        0 4px 16px 0 rgba(31, 38, 135, 0.1),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(124, 58, 237, 0.4);
+        transform: translateY(-2px);
+        box-shadow:
+          0 8px 24px 0 rgba(124, 58, 237, 0.2),
+          inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+      }
 
       .breach-item-header {
         display: flex;
