@@ -1,5 +1,5 @@
 name: password_sync
-description: "Password Sync - Secure cross-platform password manager with end-to-end encryption"
+description: "DeeplyProfound - Secure cross-platform password manager with end-to-end encryption"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev

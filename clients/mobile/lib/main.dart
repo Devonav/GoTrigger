@@ -6,33 +6,63 @@ import 'features/vault/vault_unlock_screen.dart';
 import 'features/vault/vault_list_screen.dart';
 
 void main() {
-  runApp(const PasswordSyncApp());
+  runApp(const DeeplyProfoundApp());
 }
 
-class PasswordSyncApp extends StatelessWidget {
-  const PasswordSyncApp({super.key});
+class DeeplyProfoundApp extends StatelessWidget {
+  const DeeplyProfoundApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Password Sync',
+      title: 'DeeplyProfound',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.dark(
           brightness: Brightness.dark,
-          primary: const Color(0xFFFFFFFF),        // White buttons
-          secondary: const Color(0xFF4FACFE),      // Light Blue
-          surface: const Color(0xFF0F0F0F),        // Very dark gray (mobile-friendly)
-          onSurface: const Color(0xFFFFFFFF),      // White text
+          primary: const Color(0xFF7C3AED),           // Quantum Purple
+          secondary: const Color(0xFF6366F1),         // Accent Purple
+          tertiary: const Color(0xFF8B5CF6),          // Secondary Purple
+          surface: const Color(0xFF0A0A0A),           // Deep black background
+          onSurface: const Color(0xFFFFFFFF),         // White text
           surfaceContainerHighest: const Color(0xFF1A1A1A), // Card background
-          onSurfaceVariant: const Color.fromRGBO(255, 255, 255, 0.4), // Muted text
+          onSurfaceVariant: const Color.fromRGBO(255, 255, 255, 0.5), // Muted text
+          error: const Color(0xFFEF4444),             // Error red
         ),
-        scaffoldBackgroundColor: const Color(0xFF0F0F0F),
+        scaffoldBackgroundColor: const Color(0xFF0A0A0A),
         cardColor: const Color(0xFF1A1A1A),
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
+            backgroundColor: const Color(0xFF7C3AED),  // Purple gradient button
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: const Color(0xFF7C3AED),
+            side: const BorderSide(color: Color(0xFF7C3AED), width: 1.5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.05),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: const Color(0xFF7C3AED).withOpacity(0.2), width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
           ),
         ),
         useMaterial3: true,
@@ -40,19 +70,49 @@ class PasswordSyncApp extends StatelessWidget {
       darkTheme: ThemeData(
         colorScheme: ColorScheme.dark(
           brightness: Brightness.dark,
-          primary: const Color(0xFFFFFFFF),
-          secondary: const Color(0xFF4FACFE),
-          surface: const Color(0xFF0F0F0F),
+          primary: const Color(0xFF7C3AED),
+          secondary: const Color(0xFF6366F1),
+          tertiary: const Color(0xFF8B5CF6),
+          surface: const Color(0xFF0A0A0A),
           onSurface: const Color(0xFFFFFFFF),
           surfaceContainerHighest: const Color(0xFF1A1A1A),
-          onSurfaceVariant: const Color.fromRGBO(255, 255, 255, 0.4),
+          onSurfaceVariant: const Color.fromRGBO(255, 255, 255, 0.5),
+          error: const Color(0xFFEF4444),
         ),
-        scaffoldBackgroundColor: const Color(0xFF0F0F0F),
+        scaffoldBackgroundColor: const Color(0xFF0A0A0A),
         cardColor: const Color(0xFF1A1A1A),
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
+            backgroundColor: const Color(0xFF7C3AED),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: const Color(0xFF7C3AED),
+            side: const BorderSide(color: Color(0xFF7C3AED), width: 1.5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.05),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: const Color(0xFF7C3AED).withOpacity(0.2), width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
           ),
         ),
         useMaterial3: true,
@@ -80,7 +140,7 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF0F0F0F),
       appBar: AppBar(
         title: const Text(
-          'Password Sync',
+          'DeeplyProfound',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -103,7 +163,7 @@ class HomeScreen extends StatelessWidget {
 
               // App Title
               Text(
-                'Password Sync',
+                'DeeplyProfound',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
