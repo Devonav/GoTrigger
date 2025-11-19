@@ -1,4 +1,4 @@
-# Password Sync - iOS Mobile Client
+# DeeplyProfound - iOS Mobile Client
 
 Cross-platform password manager iOS client built with Flutter. Features end-to-end encryption, biometric unlock, real-time sync, and a premium dark UI matching the desktop client.
 
@@ -492,7 +492,7 @@ See `DASHBOARD_IMPLEMENTATION.md` for detailed UI specifications and comparison 
 
 ## License
 
-Part of the Password Sync cross-platform password manager.
+Part of the DeeplyProfound cross-platform password manager.
 
 ## Contributing
 
