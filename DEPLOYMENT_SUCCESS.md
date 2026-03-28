@@ -257,6 +257,5 @@ make deploy-prod
 
 ---
 
-**Deployed by:** Claude Code
 **Date:** October 22, 2025
 **Status:** Production Ready 🚀
